@@ -1,0 +1,1260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DataAPI Documentation</title>
+    <!-- Highlight.js CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #0d1117;
+            --bg-secondary: #161b22;
+            --bg-tertiary: #21262d;
+            --text-primary: #c9d1d9;
+            --text-secondary: #8b949e;
+            --text-accent: #58a6ff;
+            --border-color: #30363d;
+            --code-bg: #161b22;
+            --code-border: #30363d;
+            --accent: #58a6ff;
+            --accent-hover: #79c0ff;
+            --success: #3fb950;
+            --warning: #d29922;
+            --error: #f85149;
+            --shadow: rgba(0, 0, 0, 0.3);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            gap: 2rem;
+        }
+
+        /* Sidebar Navigation */
+        .sidebar {
+            position: sticky;
+            top: 2rem;
+            height: fit-content;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1.5rem;
+            max-height: calc(100vh - 4rem);
+            overflow-y: auto;
+        }
+
+        .sidebar::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .sidebar::-webkit-scrollbar-track {
+            background: var(--bg-primary);
+            border-radius: 4px;
+        }
+
+        .sidebar::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 4px;
+        }
+
+        .sidebar::-webkit-scrollbar-thumb:hover {
+            background: var(--text-secondary);
+        }
+
+        .sidebar h3 {
+            color: var(--text-accent);
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .sidebar ul {
+            list-style: none;
+        }
+
+        .sidebar ul li {
+            margin-bottom: 0.5rem;
+        }
+
+        .sidebar a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            display: block;
+            padding: 0.4rem 0.6rem;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+        }
+
+        .sidebar a:hover {
+            color: var(--text-accent);
+            background: var(--bg-tertiary);
+        }
+
+        .sidebar a.active {
+            color: var(--text-accent);
+            background: var(--bg-tertiary);
+            font-weight: 500;
+        }
+
+        /* Main Content */
+        .content {
+            min-width: 0;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+            font-weight: 600;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 1rem;
+        }
+
+        h2 {
+            font-size: 1.8rem;
+            margin-top: 3rem;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+            font-weight: 600;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--border-color);
+            scroll-margin-top: 2rem;
+        }
+
+        h3 {
+            font-size: 1.4rem;
+            margin-top: 2rem;
+            margin-bottom: 0.8rem;
+            color: var(--text-accent);
+            font-weight: 600;
+        }
+
+        h4 {
+            font-size: 1.1rem;
+            margin-top: 1.5rem;
+            margin-bottom: 0.6rem;
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+
+        p {
+            margin-bottom: 1rem;
+            color: var(--text-secondary);
+        }
+
+        ul, ol {
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--text-secondary);
+        }
+
+        li {
+            margin-bottom: 0.5rem;
+        }
+
+        /* Code Blocks */
+        pre {
+            background: var(--code-bg);
+            border: 1px solid var(--code-border);
+            border-radius: 6px;
+            padding: 1rem;
+            overflow-x: auto;
+            margin: 1rem 0;
+            position: relative;
+        }
+
+        pre code {
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.9rem;
+            color: var(--text-primary);
+            line-height: 1.5;
+        }
+
+        code {
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.9em;
+            background: var(--code-bg);
+            padding: 0.2rem 0.4rem;
+            border-radius: 3px;
+            color: var(--accent);
+            border: 1px solid var(--code-border);
+        }
+
+        /* Syntax Highlighting - Override Highlight.js theme to match our design */
+        .hljs {
+            background: var(--code-bg) !important;
+            color: var(--text-primary) !important;
+        }
+        
+        .hljs-keyword,
+        .hljs-selector-tag,
+        .hljs-literal,
+        .hljs-section,
+        .hljs-link { 
+            color: #ff7b72; 
+        }
+        
+        .hljs-function,
+        .hljs-title.function_ { 
+            color: #d2a8ff; 
+        }
+        
+        .hljs-string,
+        .hljs-attr { 
+            color: #a5d6ff; 
+        }
+        
+        .hljs-number,
+        .hljs-literal { 
+            color: #79c0ff; 
+        }
+        
+        .hljs-comment,
+        .hljs-quote { 
+            color: #8b949e; 
+            font-style: italic; 
+        }
+        
+        .hljs-type,
+        .hljs-built_in { 
+            color: #ffa657; 
+        }
+        
+        .hljs-variable,
+        .hljs-template-variable { 
+            color: #c9d1d9; 
+        }
+        
+        .hljs-operator { 
+            color: #ff7b72; 
+        }
+        
+        .hljs-punctuation { 
+            color: var(--text-secondary); 
+        }
+        
+        /* Ensure code blocks have proper styling */
+        pre code.hljs {
+            display: block;
+            overflow-x: auto;
+            padding: 1rem;
+        }
+
+        /* Badges and Tags */
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.6rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-left: 0.5rem;
+        }
+
+        .badge-warning {
+            background: rgba(210, 153, 34, 0.2);
+            color: var(--warning);
+            border: 1px solid rgba(210, 153, 34, 0.3);
+        }
+
+        .badge-critical {
+            background: rgba(248, 81, 73, 0.2);
+            color: var(--error);
+            border: 1px solid rgba(248, 81, 73, 0.3);
+        }
+
+        .badge-important {
+            background: rgba(88, 166, 255, 0.2);
+            color: var(--accent);
+            border: 1px solid rgba(88, 166, 255, 0.3);
+        }
+
+        /* Alert Boxes */
+        .alert {
+            padding: 1rem;
+            border-radius: 6px;
+            margin: 1rem 0;
+            border-left: 4px solid;
+        }
+
+        .alert-warning {
+            background: rgba(210, 153, 34, 0.1);
+            border-color: var(--warning);
+            color: var(--text-secondary);
+        }
+
+        .alert-critical {
+            background: rgba(248, 81, 73, 0.1);
+            border-color: var(--error);
+            color: var(--text-secondary);
+        }
+
+        .alert-info {
+            background: rgba(88, 166, 255, 0.1);
+            border-color: var(--accent);
+            color: var(--text-secondary);
+        }
+
+        /* Method Cards */
+        .method-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            transition: all 0.2s ease;
+        }
+
+        .method-card:hover {
+            border-color: var(--accent);
+            box-shadow: 0 4px 12px var(--shadow);
+        }
+
+        .method-signature {
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            color: var(--accent);
+            font-size: 1rem;
+            margin-bottom: 0.8rem;
+            font-weight: 600;
+        }
+
+        .method-description {
+            color: var(--text-secondary);
+            margin-bottom: 0.8rem;
+        }
+
+        .method-params {
+            margin-top: 1rem;
+        }
+
+        .method-params h5 {
+            color: var(--text-primary);
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .param-item {
+            margin-left: 1rem;
+            margin-bottom: 0.5rem;
+            color: var(--text-secondary);
+        }
+
+        .param-name {
+            color: var(--accent);
+            font-weight: 500;
+        }
+
+        /* Table */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        th {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            padding: 0.8rem;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        td {
+            padding: 0.8rem;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-secondary);
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover {
+            background: var(--bg-tertiary);
+        }
+
+        /* Intro Section */
+        .intro {
+            background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .intro p {
+            font-size: 1.1rem;
+            color: var(--text-primary);
+            line-height: 1.8;
+        }
+
+        /* Scroll to Top Button */
+        .scroll-top {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: var(--accent);
+            color: white;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 12px var(--shadow);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .scroll-top:hover {
+            background: var(--accent-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px var(--shadow);
+        }
+
+        .scroll-top.visible {
+            display: flex;
+        }
+
+        /* Responsive */
+        @media (max-width: 968px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                position: relative;
+                top: 0;
+                max-height: none;
+            }
+        }
+
+        /* Smooth Scroll */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Link Styles */
+        a {
+            color: var(--accent);
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        a:hover {
+            color: var(--accent-hover);
+            text-decoration: underline;
+        }
+
+        /* Section Dividers */
+        .section-divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--border-color), transparent);
+            margin: 3rem 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <aside class="sidebar">
+            <h3>Navigation</h3>
+            <ul>
+                <li><a href="#features">Features</a></li>
+                <li><a href="#installation">Installation</a></li>
+                <li><a href="#quick-start">Quick Start</a></li>
+                <li><a href="#core-concepts">Core Concepts</a></li>
+                <li><a href="#api-reference">API Reference</a></li>
+                <li><a href="#important-caveats">Important Caveats</a></li>
+                <li><a href="#error-handling">Error Handling</a></li>
+                <li><a href="#examples">Examples</a></li>
+                <li><a href="#best-practices">Best Practices</a></li>
+                <li><a href="#forking">Forking</a></li>
+            </ul>
+        </aside>
+
+        <main class="content">
+            <h1>DataAPI Documentation</h1>
+            
+            <div class="intro">
+                <p>A robust, type-safe data management system for Roblox built on top of ProfileService. DataAPI provides a fluent, chainable API for reading and modifying player data with built-in race condition protection and comprehensive error handling.</p>
+            </div>
+
+            <h2 id="installation">Installation</h2>
+            <p>DataAPI is designed to work with Rojo. Place the <code>src/server/DataAPI</code> folder in your project structure.</p>
+
+            <h2 id="quick-start">Quick Start</h2>
+            <pre><code class="language-lua">local ServerScriptService = game:GetService("ServerScriptService")
+local DataAPI = require(ServerScriptService.Server.DataAPI)
+
+-- Define your data schema
+local Schema = {
+    Stats = {
+        Coins = 100,
+        Silver = 50,
+    },
+    Items = {
+        { id = 1, name = "Sword", amount = 1 },
+    },
+}
+
+-- Create a DataAPI instance
+local datastore = DataAPI.new("MyGameData", Schema, true) -- true = player data
+
+-- Load a player's profile
+local profile = datastore:LoadProfile(player)
+
+-- Perform operations
+local result = profile
+    :StartQuery()
+    :Get("Stats>Coins")
+    :Add(50)
+    :Set("Stats>Coins")
+    :EndQuery()
+
+if result:isSuccessful() then
+    print("Added 50 coins! New balance:", result.Value)
+else
+    warn("Failed:", result.Message)
+end</code></pre>
+
+            <h2 id="core-concepts">Core Concepts</h2>
+
+            <h3>Cursor and CursorKey</h3>
+            <p>DataAPI uses two fundamental concepts to track operations:</p>
+            <ul>
+                <li><strong>Cursor</strong> - The return value of the previous operation. This can be a reference to a table, a primitive value (number, string, boolean), or a status value. The Cursor is what subsequent operations will operate on.</li>
+                <li><strong>CursorKey</strong> - The previous key path that the Cursor is pointing to. This is where changes will occur when you call <code>Set()</code>. For example, if you call <code>Get("Stats>Coins")</code>, the CursorKey becomes <code>"Stats>Coins"</code>, and any subsequent <code>Set()</code> without a key will save to that location.</li>
+            </ul>
+
+            <p><strong>Example:</strong></p>
+            <pre><code class="language-lua">profile:StartQuery()
+    :Get("Stats>Coins")  -- Cursor = 100 (the value), CursorKey = "Stats>Coins"
+    :Add(10)             -- Cursor = 110 (modified value), CursorKey = "Stats>Coins"
+    :Set()               -- Saves Cursor (110) to CursorKey ("Stats>Coins")
+    :EndQuery()</code></pre>
+
+            <h3>Query System</h3>
+            <p>All data operations must be wrapped in a <strong>query</strong>:</p>
+            <pre><code class="language-lua">profile:StartQuery()
+    -- ... operations ...
+    :EndQuery()</code></pre>
+            <ul>
+                <li><code>StartQuery()</code> - Begins a new operation sequence</li>
+                <li><code>EndQuery()</code> - Completes the operation and returns a <code>QueryResult</code></li>
+                <li>Only one query can run at a time per profile (enforced via operation queue)</li>
+            </ul>
+
+            <h3>Carry-Over System</h3>
+            <p>After calling <code>Get()</code> or <code>Update()</code>, subsequent operations can use <strong>carry-over</strong> to avoid re-specifying the key:</p>
+            <pre><code class="language-lua">profile:StartQuery()
+    :Get("Stats>Coins")  -- Sets CursorKey to "Stats>Coins"
+    :Add(10)             -- Operates on Cursor
+    :Set()               -- Saves Cursor back to CursorKey (no key needed!)
+    :EndQuery()</code></pre>
+
+            <h3>QueryResult</h3>
+            <p>Every <code>EndQuery()</code> returns a <code>QueryResult</code> object:</p>
+            <pre><code class="language-lua">type QueryResult = {
+    Result: "Success" | "Error" | "Processing",
+    Value: any,           -- The final value after operations
+    OldValue: any,        -- The original value before operations
+    Message: string,       -- Success/error message
+    isSuccessful(): boolean
+}</code></pre>
+
+            <h2 id="api-reference">API Reference</h2>
+
+            <h3>DataAPI Methods</h3>
+
+            <div class="method-card">
+                <div class="method-signature">DataAPI.new(dataKey: string, schema: any, isPlayerData: boolean): DataAPI</div>
+                <div class="method-description">Creates a new DataAPI instance.</div>
+                <div class="method-params">
+                    <h5>Parameters:</h5>
+                    <div class="param-item"><span class="param-name">dataKey</span> - The DataStore key name</div>
+                    <div class="param-item"><span class="param-name">schema</span> - Default data structure</div>
+                    <div class="param-item"><span class="param-name">isPlayerData</span> - <code>true</code> for player data, <code>false</code> for generic data</div>
+                </div>
+            </div>
+
+            <div class="method-card">
+                <div class="method-signature">DataAPI:LoadProfile(profileKey: Player | string): Profile</div>
+                <div class="method-description">Loads a profile. For player data, pass a <code>Player</code> object. For generic data, pass a string key.</div>
+            </div>
+
+            <div class="method-card">
+                <div class="method-signature">DataAPI:GetProfile(profileKey: Player | string): Profile?</div>
+                <div class="method-description">Gets an already-loaded profile without loading it.</div>
+            </div>
+
+            <div class="method-card">
+                <div class="method-signature">DataAPI:EndProfile(profileKey: Player | string): nil</div>
+                <div class="method-description">Ends a profile session and saves data.</div>
+            </div>
+
+            <div class="method-card">
+                <div class="method-signature">DataAPI:EndAllProfiles(): nil</div>
+                <div class="method-description">Ends all profiles associated with this Datastore instance.</div>
+            </div>
+
+            <div class="method-card">
+                <div class="method-signature">DataAPI:IsMock(isMock: boolean): DataAPI</div>
+                <div class="method-description">Enables/disables mock mode for testing.</div>
+            </div>
+
+            <div class="method-card">
+                <div class="method-signature">DataAPI:SetMessageHandler(handler: (message: string, processed: () -> nil) -> nil ): DataAPI</div>
+                <div class="method-description">This is the function that will be called whenever a profile under this Datastore receives a Message, refer to ProfileStore documentation for further explanation.</div>
+            </div>
+
+            <div class="method-card">
+                <div class="method-signature">DataAPI:SetManualLeavingHandler(handler: (profile: Profile.Profile) -> nil ): DataAPI</div>
+                <div class="method-description">This function is called before the Profile is fully unloaded and is triggered when the code unloads the profile manually.</div>
+            </div>
+
+            <div class="method-card">
+                <div class="method-signature">DataAPI:SetShutdownLeavingHandler(handler: (profile: Profile.Profile) -> nil ): DataAPI</div>
+                <div class="method-description">This function is called before the Profile is fully unloaded and is triggered when the server is shutdown.</div>
+            </div>
+            
+            <div class="method-card">
+                <div class="method-signature">DataAPI:SetExternalLeavingHandler(handler: (profile: Profile.Profile) -> nil ): DataAPI</div>
+                <div class="method-description">This function is called before the Profile is fully unloaded and is triggered when another server initializes this profile (player may have server-hopped)</div>
+            </div>
+
+            <div class="method-card">
+                <div class="method-signature">DataAPI:Destroy(): nil</div>
+                <div class="method-description">Fully destroy this Datastore instance, unloads all profiles and disconnects all connections.</div>
+            </div>
+
+            <h3>Profile Methods</h3>
+
+            <h4>Query Lifecycle</h4>
+
+            <div class="method-card">
+                <div class="method-signature">Profile:StartQuery(): Profile</div>
+                <div class="method-description">Begins a new query operation. Must be called before any data operations.</div>
+                <div class="alert alert-warning">
+                    <strong>⚠️ Important:</strong> Only one query can run at a time per profile. Additional queries are automatically queued.
+                </div>
+            </div>
+
+            <div class="method-card">
+                <div class="method-signature">Profile:EndQuery(): QueryResult</div>
+                <div class="method-description">Completes the query and returns a <code>QueryResult</code>. Always check <code>result:isSuccessful()</code> before using the result.</div>
+            </div>
+
+            <h4>Basic Operations</h4>
+
+            <div class="method-card">
+                <div class="method-signature">Profile:Get(key: string): Profile</div>
+                <div class="method-description">Retrieves a value from the profile and sets it as the Cursor.</div>
+                <pre><code class="language-lua">:Get("Stats>Coins")  -- Gets nested value using ">" separator</code></pre>
+                <p><strong>Carry-Over:</strong> Sets CursorKey to <code>key</code> and enables carry-over mode. The Cursor becomes the retrieved value.</p>
+            </div>
+
+            <div class="method-card">
+                <div class="method-signature">Profile:Set(key: string?, value: any?): Profile</div>
+                <div class="method-description">Sets a value in the profile.</div>
+                <ul>
+                    <li>If <code>key</code> is <code>nil</code>, uses the CursorKey from previous <code>Get()</code>/<code>Update()</code></li>
+                    <li>If <code>value</code> is <code>nil</code>, uses the current Cursor value</li>
+                </ul>
+                <pre><code class="language-lua">:Set("Stats>Coins", 100)  -- Explicit key and value
+:Set("Stats>Coins")       -- Explicit key, uses Cursor value
+:Set()                    -- Uses CursorKey and Cursor value</code></pre>
+                <div class="alert alert-warning">
+                    <strong>⚠️ Important:</strong> See <a href="#when-set-is-required">When Set() is Required</a> section.
+                </div>
+            </div>
+
+            <div class="method-card">
+                <div class="method-signature">Profile:Update(key: string, callback: (oldValue: any) -> any): Profile</div>
+                <div class="method-description">Atomically updates a value using a callback function.</div>
+                <pre><code class="language-lua">:Update("Stats>Coins", function(oldValue)
+    return oldValue + 50
+end)</code></pre>
+                <p><strong>Carry-Over:</strong> Automatically sets CursorKey and Cursor after update.</p>
+            </div>
+
+            <div class="method-card">
+                <div class="method-signature">Profile:SetAllData(newData: any): Profile</div>
+                <div class="method-description">Replaces the entire profile data. Use with caution!</div>
+            </div>
+
+            <h4>Numeric Operations</h4>
+
+            <div class="method-card">
+                <div class="method-signature">Profile:Increment(): Profile</div>
+                <div class="method-description">Increments the current numeric value by 1.</div>
+                <p><strong>Requires:</strong> Cursor must be a number.</p>
+            </div>
+
+            <div class="method-card">
+                <div class="method-signature">Profile:Decrement(allowNegative: boolean?): Profile</div>
+                <div class="method-description">Decrements the current numeric value by 1.</div>
+                <div class="method-params">
+                    <h5>Parameters:</h5>
+                    <div class="param-item"><span class="param-name">allowNegative</span> - If <code>false</code> (default), prevents value from going below 0</div>
+                </div>
+                <p><strong>Requires:</strong> Cursor must be a number.</p>
+            </div>
+
+            <div class="method-card">
+                <div class="method-signature">Profile:Add(value: number): Profile</div>
+                <div class="method-description">Adds a number to the current value.</div>
+                <p><strong>Requires:</strong> Cursor must be a number.</p>
+            </div>
+
+            <div class="method-card">
+                <div class="method-signature">Profile:Subtract(value: number, allowNegative: boolean?): Profile</div>
+                <div class="method-description">Subtracts a number from the current value.</div>
+                <div class="method-params">
+                    <h5>Parameters:</h5>
+                    <div class="param-item"><span class="param-name">allowNegative</span> - If <code>false</code> (default), prevents value from going below 0</div>
+                </div>
+                <p><strong>Requires:</strong> Cursor must be a number.</p>
+            </div>
+
+            <div class="method-card">
+                <div class="method-signature">Profile:Purchase(price: number, allowNegative: boolean?): Profile</div>
+                <div class="method-description">Deducts <code>price</code> from the current value (typically a currency).</div>
+                <div class="alert alert-critical">
+                    <strong>⚠️ Critical:</strong> If the purchase fails (insufficient funds), the operation is <strong>cancelled</strong> and returns an error <code>QueryResult</code>. Always check <code>result:isSuccessful()</code> after <code>Purchase()</code>.
+                </div>
+                <p><strong>Requires:</strong> Cursor must be a number.</p>
+                <pre><code class="language-lua">local result = profile
+    :StartQuery()
+    :Get("Stats>Coins")
+    :Purchase(100)  -- If this fails, entire query is cancelled
+    :EndQuery()
+
+if not result:isSuccessful() then
+    warn("Purchase failed:", result.Message)  -- "Cannot afford this purchase."
+    return
+end</code></pre>
+            </div>
+
+            <div class="method-card">
+                <div class="method-signature">Profile:Clamp(min: number, max: number): Profile</div>
+                <div class="method-description">Clamps the current numeric value between <code>min</code> and <code>max</code>.</div>
+                <p><strong>Requires:</strong> Cursor must be a number.</p>
+            </div>
+
+            <h4>Table Operations</h4>
+
+            <div class="method-card">
+                <div class="method-signature">Profile:Filter(filterFunction: (value: any) -> boolean): Profile</div>
+                <div class="method-description">Removes elements from a table that don't pass the filter function.</div>
+                <div class="alert alert-warning">
+                    <strong>⚠️ Important:</strong> Modifies the table <strong>directly</strong>. <code>Set()</code> is <strong>NOT required</strong> after <code>Filter()</code>.
+                </div>
+                <p><strong>Requires:</strong> Cursor must be a table.</p>
+                <pre><code class="language-lua">:Get("Items")
+:Filter(function(item)
+    return item.amount > 0  -- Keep only items with amount > 0
+end)
+-- No Set() needed! Table is modified directly.</code></pre>
+            </div>
+
+            <div class="method-card">
+                <div class="method-signature">Profile:Map(mapFunction: (value: any, index: number?) -> any): Profile</div>
+                <div class="method-description">Transforms each element in a table using a mapping function.</div>
+                <div class="alert alert-warning">
+                    <strong>⚠️ Important:</strong> Creates a <strong>new table</strong>. <code>Set()</code> <strong>IS required</strong> to save changes.
+                </div>
+                <p><strong>Requires:</strong> Cursor must be a table.</p>
+                <pre><code class="language-lua">:Get("Items")
+:Map(function(item, index)
+    return { id = item.id, name = item.name:upper() }
+end)
+:Set("Items")  -- Required! Map creates a new table.
+:Set() -- Can also be called implicitly since CursorKey is set to "Items"</code></pre>
+            </div>
+
+            <div class="method-card">
+                <div class="method-signature">Profile:Find(findFunction: (value: any) -> boolean): Profile</div>
+                <div class="method-description">Finds the first element in a table that matches the find function.</div>
+                <div class="alert alert-critical">
+                    <strong>⚠️ Critical:</strong> If no element is found, the operation is <strong>cancelled</strong> and returns an error <code>QueryResult</code>. Always check <code>result:isSuccessful()</code> after <code>Find()</code>.
+                </div>
+                <p><strong>Requires:</strong> Cursor must be a table.</p>
+                <pre><code class="language-lua">local result = profile
+    :StartQuery()
+    :Get("Items")
+    :Find(function(item)
+        return item.id == 123
+    end)
+    :EndQuery()
+
+if not result:isSuccessful() then
+    warn("Item not found:", result.Message)  -- ":Find() returned no eligible values."
+    return
+end
+
+-- If successful, result.Value contains the found item</code></pre>
+            </div>
+
+            <div class="method-card">
+                <div class="method-signature">Profile:FindOrInsert(insertValue: any, findFunction: (value: any) -> boolean): Profile</div>
+                <div class="method-description">Finds an element in a table, or inserts <code>insertValue</code> if not found.</div>
+                <div class="alert alert-warning">
+                    <strong>⚠️ Important:</strong> When inserting, modifies the table <strong>directly</strong>. <code>Set()</code> is <strong>NOT required</strong> after <code>FindOrInsert()</code> when it inserts.
+                </div>
+                <p><strong>Requires:</strong> Cursor must be a table.</p>
+                <pre><code class="language-lua">:Get("Items")
+:FindOrInsert(
+    { id = 13, name = "Apple", amount = 0 },
+    function(item)
+        return item.name == "Apple"
+    end
+)
+-- If inserted, no Set() needed. If found, Set() only needed if you modify the item.</code></pre>
+            </div>
+
+            <div class="method-card">
+                <div class="method-signature">Profile:Push(value: any): Profile</div>
+                <div class="method-description">Adds a value to the end of a table.</div>
+                <div class="alert alert-warning">
+                    <strong>⚠️ Important:</strong> Modifies the table <strong>directly</strong>. <code>Set()</code> is <strong>NOT required</strong> after <code>Push()</code>.
+                </div>
+                <p><strong>Requires:</strong> Cursor must be a table.</p>
+                <pre><code class="language-lua">:Get("Items")
+:Push({ id = 14, name = "Banana", amount = 1 })
+-- No Set() needed! Table is modified directly.</code></pre>
+            </div>
+
+            <div class="method-card">
+                <div class="method-signature">Profile:Pop(): Profile</div>
+                <div class="method-description">Removes the element found by the previous <code>Find()</code> or <code>FindOrInsert()</code> operation.</div>
+                <div class="alert alert-warning">
+                    <strong>⚠️ Important:</strong> Modifies the table <strong>directly</strong> and saves automatically. <code>Set()</code> is <strong>NOT required</strong> after <code>Pop()</code>.
+                </div>
+                <p><strong>Requires:</strong> Must be called after <code>Find()</code> or <code>FindOrInsert()</code>.</p>
+                <pre><code class="language-lua">:Get("Items")
+:Find(function(item)
+    return item.id == 123
+end)
+:Pop()  -- Removes the found item, saves automatically
+-- No Set() needed!</code></pre>
+            </div>
+
+            <h4>Transformation Operations</h4>
+
+            <div class="method-card">
+                <div class="method-signature">Profile:Transform(transformCallback: (oldValue: any, cursor: any) -> any): Profile</div>
+                <div class="method-description">Transforms the Cursor using a callback function.</div>
+                <div class="method-params">
+                    <h5>Parameters:</h5>
+                    <div class="param-item"><span class="param-name">oldValue</span> - The current Cursor value (may have been modified by previous operations)</div>
+                    <div class="param-item"><span class="param-name">cursor</span> - The original value from the data at CursorKey (before any modifications in this query)</div>
+                </div>
+                <div class="alert alert-warning">
+                    <strong>⚠️ Important:</strong> Returns a <strong>new value</strong> that replaces the Cursor. <code>Set()</code> <strong>IS NOT required</strong> to save changes <strong>ONLY</strong> if you've <strong>modified a table</strong> however it is safe to call for consistency.
+                </div>
+                <p><strong>Requires:</strong> Cursor and CursorKey must be set.</p>
+                <pre><code class="language-lua">:Get("Items")
+:Find(function(item)
+    return item.name == "Apple"
+end)
+:Transform(function(element, cursor)
+    -- Modify the element and return it
+    element.amount = element.amount + 1
+    return element  -- Must return the full object!
+end)
+:Set()  -- Not required here but called for consistency</code></pre>
+                <pre><code class="language-lua">:Get("Currency>Coins")
+:Transform(function(element, _)
+    if should_receive_bonus then
+	return element + 20
+    else
+	return element + 10
+    end
+end)
+:Set()  -- Set is required here because we're modifying a number value</code></pre>
+            </div>
+
+            <h4>Comparison Operations</h4>
+
+            <div class="method-card">
+                <div class="method-signature">Profile:isGreaterThan(compare: number): Profile</div>
+                <div class="method-description">Checks if the current numeric value is greater than <code>compare</code>. Sets Cursor to a boolean.</div>
+                <p><strong>Requires:</strong> Cursor must be a number.</p>
+            </div>
+
+            <div class="method-card">
+                <div class="method-signature">Profile:isLessThan(compare: number): Profile</div>
+                <div class="method-description">Checks if the current numeric value is less than <code>compare</code>.</div>
+                <p><strong>Requires:</strong> Cursor must be a number.</p>
+            </div>
+
+            <div class="method-card">
+                <div class="method-signature">Profile:isGreaterOrEqualThan(compare: number): Profile</div>
+                <div class="method-description">Checks if the current numeric value is greater than or equal to <code>compare</code>.</div>
+                <p><strong>Requires:</strong> Cursor must be a number.</p>
+            </div>
+
+            <div class="method-card">
+                <div class="method-signature">Profile:isLessOrEqualThan(compare: number): Profile</div>
+                <div class="method-description">Checks if the current numeric value is less than or equal to <code>compare</code>.</div>
+                <p><strong>Requires:</strong> Cursor must be a number.</p>
+            </div>
+
+            <h4>Using Comparison Operations</h4>
+            <pre><code class="language-lua">local can_afford_after_bonus = profile
+	:StartQuery()
+	:Get("Currency>Gold")
+	:Add(50)
+	:Set()
+	:isGreaterOrEqualThan(100)
+	:EndQuery()
+
+if can_afford_after_bonus:isSuccessful() and can_afford_after_bonus.Value == true then
+	print("after bonus, player can afford!")
+end</code></pre>
+
+            <h4>Utility Methods</h4>
+
+            <div class="method-card">
+                <div class="method-signature">Profile:PreventCarryOver(): Profile</div>
+                <div class="method-description">Disables carry-over mode. Useful for breaking the carry-over chain. Clears CursorKey and prevents future carry-over operations until the CursorKey is set again.</div>
+                <pre><code class="language-lua">:StartQuery()
+:Get("Currency>Coins")
+:Add(50)
+:PreventCarryOver()
+:Transform() -- will not work as well as other operations.
+:Set() -- Implicity set will no longer work here because CursorKey doesn't exist.
+:Set("Currency>Coins") -- works instead</code></pre>
+            </div>
+
+            <div class="method-card">
+                <div class="method-signature">Profile:PrintAllData(): Profile</div>
+                <div class="method-description">Debug method that prints the entire profile data structure. Useful for inspecting the full state of a profile.</div>
+                <pre><code class="language-lua">profile:StartQuery()
+    :PrintAllData()  -- Prints entire profile.Data
+    :EndQuery()</code></pre>
+            </div>
+
+            <div class="method-card">
+                <div class="method-signature">Profile:PrintCursor(): Profile</div>
+                <div class="method-description">Debug method that prints the current internal state during a query operation. Shows:</div>
+                <ul>
+                    <li><strong>Cursor</strong> - The current value being operated on</li>
+                    <li><strong>OldValue</strong> - The original value before operations</li>
+                    <li><strong>CursorKey</strong> - The key path where changes will occur</li>
+                    <li><strong>FindIndex</strong> - The index found by <code>Find()</code> or <code>FindOrInsert()</code> (if applicable)</li>
+                </ul>
+                <pre><code class="language-lua">profile:StartQuery()
+    :Get("Stats>Coins")
+    :PrintCursor()  -- Debug: See current state
+    :Add(10)
+    :PrintCursor()  -- Debug: See updated state
+    :Set()
+    :EndQuery()</code></pre>
+                <p><strong>Output example:</strong></p>
+                <pre><code class="language-lua">:PrintCursor() // Current Value: 100 | Old Value: "READ-ONLY" | Carry-over Key: Stats>Coins | Find Index: nil
+:PrintCursor() // Current Value: 110 | Old Value: "READ-ONLY" | Carry-over Key: Stats>Coins | Find Index: nil</code></pre>
+                <p><strong>Note:</strong> The output shows "Carry-over Key" which refers to CursorKey in the documentation terminology.</p>
+            </div>
+
+            <h2 id="important-caveats">Important Caveats</h2>
+
+            <h3 id="when-set-is-required">When Set() is Required</h3>
+            <p><strong><code>Set()</code> is NOT required</strong> when:</p>
+            <ul>
+                <li>Modifying tables <strong>directly</strong> via reference (Filter, Push, FindOrInsert when inserting, Pop)</li>
+                <li>Operations that modify the original table in-place</li>
+            </ul>
+            <p><strong><code>Set()</code> IS required</strong> when:</p>
+            <ul>
+                <li>Creating <strong>new</strong> values/tables (Map, Transform returning new value)</li>
+                <li>Modifying <strong>primitives</strong> (numbers, strings, booleans) - they can't be modified in-place</li>
+                <li>Any operation that replaces Cursor with a new value</li>
+            </ul>
+            <p><strong>Rule of thumb:</strong> If the operation modifies a table reference directly, no <code>Set()</code> needed. If it creates a new value, <code>Set()</code> is required.</p>
+
+            <h3>Operations That Cancel on Failure</h3>
+            <p>These operations will <strong>cancel the entire query</strong> and return an error <code>QueryResult</code> if they fail:</p>
+            <ol>
+                <li><strong><code>Purchase()</code></strong> - Fails if insufficient funds (unless <code>allowNegative</code> is <code>true</code>)</li>
+                <li><strong><code>Find()</code></strong> - Fails if no matching element is found</li>
+            </ol>
+            <div class="alert alert-critical">
+                <strong>Always check <code>result:isSuccessful()</code> after these operations!</strong>
+            </div>
+
+            <h3>Carry-Over Limitations</h3>
+            <ul>
+                <li>Cursor and CursorKey are cleared when <code>EndQuery()</code> is called</li>
+                <li>CursorKey requires a previous <code>Get()</code> or <code>Update()</code> call</li>
+                <li>Some operations require Cursor and CursorKey to be set (all operations except <code>Get</code>, <code>Update</code>, <code>Set</code>, <code>SetAllData</code>)</li>
+            </ul>
+
+            <h3>Query Chaining</h3>
+            <ul>
+                <li>Operations can be chained together</li>
+                <li>Each operation returns <code>self</code> (Profile) for chaining</li>
+                <li>If any operation fails, subsequent operations in the chain are skipped</li>
+                <li>Always call <code>EndQuery()</code> to complete the query</li>
+            </ul>
+
+            <h3>Table Modification Behavior</h3>
+            <p>When you call <code>Get()</code> on a table, you receive a <strong>reference</strong> to that table, not a copy. This means:</p>
+            <ul>
+                <li>Modifying the table directly (via <code>Filter</code>, <code>Push</code>, etc.) modifies the original data</li>
+                <li>No <code>Set()</code> needed for direct modifications</li>
+                <li>Creating a new table (via <code>Map</code>, <code>Transform</code>) requires <code>Set()</code> to save</li>
+            </ul>
+
+            <h3>Nested Key Syntax</h3>
+            <p>Use <code>&gt;</code> to access nested values:</p>
+            <pre><code class="language-lua">:Get("Stats>Coins")        -- profile.Data.Stats.Coins
+:Get("Player>Level>XP")    -- profile.Data.Player.Level.XP</code></pre>
+
+            <h2 id="error-handling">Error Handling</h2>
+            <p>All operations return a <code>QueryResult</code> when <code>EndQuery()</code> is called. Check success status:</p>
+            <pre><code class="language-lua">local result = profile
+    :StartQuery()
+    :Get("Stats>Coins")
+    :Add(50)
+    :Set("Stats>Coins")
+    :EndQuery()
+
+if result:isSuccessful() then
+    print("Success! New value:", result.Value)
+else
+    warn("Error:", result.Message)
+    -- result.Value will be "nil"
+    -- result.OldValue will be "nil"
+end</code></pre>
+
+            <h3>Common Error Messages</h3>
+            <ul>
+                <li><code>"StartQuery was never called."</code> - Forgot to call <code>StartQuery()</code></li>
+                <li><code>"Attempted to call a method without Current Value."</code> - Cursor is not set (no previous Get/Update)</li>
+                <li><code>"Cannot afford this purchase."</code> - <code>Purchase()</code> failed due to insufficient funds</li>
+                <li><code>":Find() returned no eligible values."</code> - <code>Find()</code> didn't find a match</li>
+                <li><code>":Find() didn't return any results."</code> - <code>Pop()</code> called without prior <code>Find()</code></li>
+            </ul>
+
+            <h2 id="examples">Examples</h2>
+
+            <h3>Example 1: Simple Currency Addition</h3>
+            <pre><code class="language-lua">local result = profile
+    :StartQuery()
+    :Get("Stats>Coins")
+    :Add(100)
+    :Set("Stats>Coins")
+    :EndQuery()
+
+if result:isSuccessful() then
+    print("Added 100 coins!")
+end</code></pre>
+
+            <h3>Example 2: Purchase with Validation</h3>
+            <pre><code class="language-lua">local result = profile
+    :StartQuery()
+    :Get("Stats>Coins")
+    :Purchase(applePrice)
+    :EndQuery()
+
+if not result:isSuccessful() then
+    player:SendNotification("Insufficient funds!")
+    return
+end
+
+-- Purchase succeeded, continue...</code></pre>
+
+            <h3>Example 3: Find and Modify Item</h3>
+            <pre><code class="language-lua">local result = profile
+    :StartQuery()
+    :Get("Items")
+    :Find(function(item)
+        return item.id == 123
+    end)
+    :Transform(function(element, cursor)
+        element.amount = element.amount + 1
+        return element
+    end)
+    :Set()
+    :EndQuery()
+
+if not result:isSuccessful() then
+    warn("Item not found or transform failed")
+end</code></pre>
+
+            <h3>Example 4: Filter Items</h3>
+            <pre><code class="language-lua">local result = profile
+    :StartQuery()
+    :Get("Items")
+    :Filter(function(item)
+        return item.amount > 0  -- Keep only items with amount > 0
+    end)
+    -- No Set() needed! Filter modifies the table directly.
+    :EndQuery()</code></pre>
+
+            <h3>Example 5: Find or Insert Pattern</h3>
+            <pre><code class="language-lua">local result = profile
+    :StartQuery()
+    :Get("Items")
+    :FindOrInsert(
+        { id = 13, name = "Apple", amount = 0 },
+        function(item)
+            return item.name == "Apple"
+        end
+    )
+    :Transform(function(element, cursor)
+        element.amount = element.amount + 1
+        return element
+    end)
+    :Set()  -- Only needed if Transform returns new value
+    :EndQuery()</code></pre>
+
+            <h3>Example 6: Complex Purchase Flow</h3>
+            <pre><code class="language-lua">local applePrice = 10
+
+local purchaseResult = profile
+    :StartQuery()
+    :Get("Stats>Silver")
+    :Purchase(applePrice)
+    :Get("Items")
+    :FindOrInsert(
+        { id = 13, name = "Apple", amount = 0 },
+        function(element)
+            return element.name == "Apple"
+        end
+    )
+    :Transform(function(element, cursor)
+        element.amount = element.amount + 1
+        return element
+    end)
+    :Set()
+    :EndQuery()
+
+if not purchaseResult:isSuccessful() then
+    player:SendNotification("Purchase failed: " .. purchaseResult.Message)
+    return
+end
+
+player:SendNotification("Successfully purchased an apple!")</code></pre>
+
+            <h2 id="best-practices">Best Practices</h2>
+            <ol>
+                <li><strong>Always check <code>isSuccessful()</code></strong> - Especially after <code>Purchase()</code> and <code>Find()</code></li>
+                <li><strong>Use Cursor and CursorKey when possible</strong> - Reduces code duplication:
+                    <pre><code class="language-lua">-- Good
+:Get("Stats>Coins"):Add(10):Set()
+
+-- Avoid
+:Get("Stats>Coins"):Add(10):Set("Stats>Coins")</code></pre>
+                </li>
+                <li><strong>Remember Set() rules</strong> - Direct table modifications don't need <code>Set()</code>, but new values do</li>
+                <li><strong>Handle errors gracefully</strong> - Always provide user feedback on failures</li>
+                <li><strong>Use descriptive error messages</strong> - The built-in messages are helpful for debugging</li>
+                <li><strong>Keep queries atomic</strong> - Group related operations in a single query</li>
+                <li><strong>Don't nest queries</strong> - One query at a time per profile</li>
+                <li><strong>Use mock mode for testing</strong> - <code>datastore:IsMock(true)</code> for unit tests</li>
+            </ol>
+
+            <h2 id="forking">Forking</h2>
+            <p>If you find this module to be interesting and would like to contribute, simply fork it and add your new features. If you're planning on adding new chained-methods, please create proper unit testing for them in <code>Testing\Validators</code>.</p>
+            <p>After any new additions, run and verify all tests to make sure the system still works fully.</p>
+            <pre><code class="language-lua">local DataAPITest = require(script.DataAPITest)
+
+DataAPITest.ExecuteDataAPITest()</code></pre>
+        </main>
+    </div>
+
+    <div class="scroll-top" id="scrollTop" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M18 15l-6-6-6 6"/>
+        </svg>
+    </div>
+
+    <script>
+        // Scroll to top button
+        const scrollTopBtn = document.getElementById('scrollTop');
+        
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) {
+                scrollTopBtn.classList.add('visible');
+            } else {
+                scrollTopBtn.classList.remove('visible');
+            }
+        });
+
+        // Active navigation highlighting
+        const sections = document.querySelectorAll('h2[id], h3[id]');
+        const navLinks = document.querySelectorAll('.sidebar a');
+
+        window.addEventListener('scroll', () => {
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.clientHeight;
+                if (pageYOffset >= sectionTop - 200) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === '#' + current) {
+                    link.classList.add('active');
+                }
+            });
+        });
+
+        // Smooth scroll for navigation links
+        document.querySelectorAll('.sidebar a').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+    
+    <!-- Highlight.js Script -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/lua.min.js"></script>
+    <script>
+        // Initialize syntax highlighting
+        document.addEventListener('DOMContentLoaded', function() {
+            hljs.highlightAll();
+        });
+    </script>
+</body>
+</html>
