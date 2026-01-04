@@ -1209,6 +1209,16 @@ DataAPITest.ExecuteDataAPITest()</code></pre>
             }
         });
 
+        // Helper function to extract hash from href (works with htmlpreview's modified URLs)
+        function extractHash(href) {
+            if (!href) return '';
+            const hashIndex = href.indexOf('#');
+            if (hashIndex !== -1) {
+                return href.substring(hashIndex);
+            }
+            return href.startsWith('#') ? href : '';
+        }
+
         // Active navigation highlighting
         const sections = document.querySelectorAll('h2[id], h3[id]');
         const navLinks = document.querySelectorAll('.sidebar a');
@@ -1225,7 +1235,8 @@ DataAPITest.ExecuteDataAPITest()</code></pre>
 
             navLinks.forEach(link => {
                 link.classList.remove('active');
-                if (link.getAttribute('href') === '#' + current) {
+                const linkHash = extractHash(link.getAttribute('href'));
+                if (linkHash === '#' + current) {
                     link.classList.add('active');
                 }
             });
@@ -1235,21 +1246,14 @@ DataAPITest.ExecuteDataAPITest()</code></pre>
         document.querySelectorAll('.sidebar a').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
                 e.preventDefault();
-                let href = this.getAttribute('href');
+                e.stopPropagation();
                 
-                // Extract hash from href (handles both #hash and full URLs with hash)
-                let hash = '';
-                if (href) {
-                    const hashIndex = href.indexOf('#');
-                    if (hashIndex !== -1) {
-                        hash = href.substring(hashIndex);
-                    } else if (href.startsWith('#')) {
-                        hash = href;
-                    }
-                }
+                const href = this.getAttribute('href');
+                const hash = extractHash(href);
                 
                 if (hash) {
                     const targetId = hash.substring(1);
+                    // Always use getElementById, never querySelector with href
                     const target = document.getElementById(targetId);
                     if (target) {
                         // Calculate offset for sticky header
@@ -1268,52 +1272,55 @@ DataAPITest.ExecuteDataAPITest()</code></pre>
         });
     </script>
     
-    <!-- Highlight.js Script -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" onload="initHighlighting()" onerror="console.warn('Failed to load Highlight.js')"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/lua.min.js"></script>
+    <!-- Highlight.js Script - Loaded asynchronously to avoid blocking -->
     <script>
-        // Initialize syntax highlighting
-        function initHighlighting() {
-            // Wait for hljs to be available
-            if (typeof window.hljs === 'undefined') {
-                // Retry if hljs not loaded yet (max 10 retries = 1 second)
-                let retries = 0;
-                const checkInterval = setInterval(function() {
-                    retries++;
-                    if (typeof window.hljs !== 'undefined') {
-                        clearInterval(checkInterval);
-                        highlightAll();
-                    } else if (retries >= 10) {
-                        clearInterval(checkInterval);
-                        console.warn('Highlight.js failed to load after retries');
+        (function() {
+            // Self-contained highlighting initialization
+            function tryHighlight() {
+                if (typeof window.hljs !== 'undefined' && window.hljs.highlightElement) {
+                    try {
+                        document.querySelectorAll('pre code').forEach(function(block) {
+                            if (!block.classList.contains('hljs')) {
+                                window.hljs.highlightElement(block);
+                            }
+                        });
+                    } catch (e) {
+                        // Silently fail - highlighting is optional
                     }
-                }, 100);
-                return;
+                }
             }
-            highlightAll();
-        }
-        
-        function highlightAll() {
-            try {
-                // Highlight all code blocks
-                document.querySelectorAll('pre code').forEach((block) => {
-                    if (!block.classList.contains('hljs')) {
-                        window.hljs.highlightElement(block);
-                    }
+            
+            // Load Highlight.js scripts
+            var hljsScript = document.createElement('script');
+            hljsScript.src = 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js';
+            hljsScript.onload = function() {
+                // Load Lua language support
+                var luaScript = document.createElement('script');
+                luaScript.src = 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/lua.min.js';
+                luaScript.onload = tryHighlight;
+                luaScript.onerror = function() { /* ignore */ };
+                document.head.appendChild(luaScript);
+                
+                // Try highlighting immediately
+                setTimeout(tryHighlight, 50);
+            };
+            hljsScript.onerror = function() { 
+                // Silently fail - page works without highlighting
+            };
+            document.head.appendChild(hljsScript);
+            
+            // Also try on DOMContentLoaded and after a delay
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', function() {
+                    setTimeout(tryHighlight, 200);
                 });
-            } catch (e) {
-                console.warn('Highlight.js error:', e);
+            } else {
+                setTimeout(tryHighlight, 200);
             }
-        }
-        
-        // Try on DOMContentLoaded as fallback
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', function() {
-                setTimeout(initHighlighting, 100);
-            });
-        } else {
-            setTimeout(initHighlighting, 100);
-        }
+            
+            // Final retry after everything should be loaded
+            setTimeout(tryHighlight, 1000);
+        })();
     </script>
 </body>
 </html>
