@@ -1235,10 +1235,22 @@ DataAPITest.ExecuteDataAPITest()</code></pre>
         document.querySelectorAll('.sidebar a').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
                 e.preventDefault();
-                const href = this.getAttribute('href');
-                if (href && href.startsWith('#')) {
-                    const targetId = href.substring(1);
-                    const target = document.getElementById(targetId) || document.querySelector(href);
+                let href = this.getAttribute('href');
+                
+                // Extract hash from href (handles both #hash and full URLs with hash)
+                let hash = '';
+                if (href) {
+                    const hashIndex = href.indexOf('#');
+                    if (hashIndex !== -1) {
+                        hash = href.substring(hashIndex);
+                    } else if (href.startsWith('#')) {
+                        hash = href;
+                    }
+                }
+                
+                if (hash) {
+                    const targetId = hash.substring(1);
+                    const target = document.getElementById(targetId);
                     if (target) {
                         // Calculate offset for sticky header
                         const offset = 100;
@@ -1249,39 +1261,58 @@ DataAPITest.ExecuteDataAPITest()</code></pre>
                         });
                     } else {
                         // Fallback: try direct navigation
-                        window.location.hash = href;
+                        window.location.hash = hash;
                     }
                 }
             });
         });
     </script>
     
-    <!-- Highlight.js Script - Load before DOMContentLoaded -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <!-- Highlight.js Script -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" onload="initHighlighting()" onerror="console.warn('Failed to load Highlight.js')"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/lua.min.js"></script>
     <script>
-        // Initialize syntax highlighting - try multiple times to ensure it works
+        // Initialize syntax highlighting
         function initHighlighting() {
-            if (typeof hljs !== 'undefined') {
+            // Wait for hljs to be available
+            if (typeof window.hljs === 'undefined') {
+                // Retry if hljs not loaded yet (max 10 retries = 1 second)
+                let retries = 0;
+                const checkInterval = setInterval(function() {
+                    retries++;
+                    if (typeof window.hljs !== 'undefined') {
+                        clearInterval(checkInterval);
+                        highlightAll();
+                    } else if (retries >= 10) {
+                        clearInterval(checkInterval);
+                        console.warn('Highlight.js failed to load after retries');
+                    }
+                }, 100);
+                return;
+            }
+            highlightAll();
+        }
+        
+        function highlightAll() {
+            try {
                 // Highlight all code blocks
                 document.querySelectorAll('pre code').forEach((block) => {
-                    try {
-                        hljs.highlightElement(block);
-                    } catch (e) {
-                        console.warn('Highlight.js error:', e);
+                    if (!block.classList.contains('hljs')) {
+                        window.hljs.highlightElement(block);
                     }
                 });
-            } else {
-                // Retry if hljs not loaded yet
-                setTimeout(initHighlighting, 100);
+            } catch (e) {
+                console.warn('Highlight.js error:', e);
             }
         }
         
-        // Try immediately and on DOMContentLoaded
+        // Try on DOMContentLoaded as fallback
         if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', initHighlighting);
+            document.addEventListener('DOMContentLoaded', function() {
+                setTimeout(initHighlighting, 100);
+            });
         } else {
-            initHighlighting();
+            setTimeout(initHighlighting, 100);
         }
     </script>
 </body>
