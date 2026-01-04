@@ -614,6 +614,15 @@ end</code></pre>
             </div>
 
             <div class="method-card">
+                <div class="method-signature">DataAPI:GetAllProfiles(): { [string]: Profile }</div>
+                <div class="method-description">Returns a dictionary of all currently loaded profiles. Keys are profile keys (string), values are Profile objects.</div>
+                <pre><code class="language-lua">local allProfiles = datastore:GetAllProfiles()
+for profileKey, profile in pairs(allProfiles) do
+    print("Profile key:", profileKey)
+end</code></pre>
+            </div>
+
+            <div class="method-card">
                 <div class="method-signature">DataAPI:EndProfile(profileKey: Player | string): nil</div>
                 <div class="method-description">Ends a profile session and saves data.</div>
             </div>
@@ -646,6 +655,14 @@ end</code></pre>
             <div class="method-card">
                 <div class="method-signature">DataAPI:SetExternalLeavingHandler(handler: (profile: Profile.Profile) -> nil ): DataAPI</div>
                 <div class="method-description">This function is called before the Profile is fully unloaded and is triggered when another server initializes this profile (player may have server-hopped)</div>
+            </div>
+
+            <div class="method-card">
+                <div class="method-signature">DataAPI:IsProfileActive(profileKey: string): boolean</div>
+                <div class="method-description">Checks if a profile is currently active (loaded and not released). Returns <code>true</code> if the profile exists and is active, <code>false</code> otherwise.</div>
+                <pre><code class="language-lua">if datastore:IsProfileActive(tostring(player.UserId)) then
+    print("Profile is active!")
+end</code></pre>
             </div>
 
             <div class="method-card">
@@ -983,6 +1000,37 @@ end</code></pre>
                 <p><strong>Note:</strong> The output shows "Carry-over Key" which refers to CursorKey in the documentation terminology.</p>
             </div>
 
+            <h4>Analytics Methods</h4>
+
+            <div class="method-card">
+                <div class="method-signature">Profile:LogAnalyticsEconomyEvent(parameters: EconomyEventParameters?): Profile</div>
+                <div class="method-description">Logs an economy event to Roblox Analytics. This method automatically detects whether currency was gained or lost based on the difference between OldValue and CurrentValue.</div>
+                <div class="method-params">
+                    <h5>Parameters:</h5>
+                    <div class="param-item"><span class="param-name">parameters</span> - Optional table with fields: <code>FlowType</code>, <code>CurrencyType</code>, <code>Amount</code>, <code>TransactionType</code>, <code>Sku</code>, <code>CustomFields</code></div>
+                </div>
+                <div class="alert alert-warning">
+                    <strong>⚠️ Important:</strong> This method only works on Player profiles (not generic profiles). It requires:
+                    <ul style="margin-top: 0.5rem;">
+                        <li>Cursor must be a number</li>
+                        <li>OldValue must be a number (requires calling <code>Set()</code> or <code>Update()</code> first)</li>
+                        <li>CursorKey must be set (automatically set after <code>Get()</code> or <code>Update()</code>)</li>
+                    </ul>
+                </div>
+                <p><strong>Requires:</strong> Must be called after a currency operation that modified a numeric value.</p>
+                <pre><code class="language-lua">-- Log analytics after a purchase
+local result = profile
+    :StartQuery()
+    :Get("Stats>Coins")
+    :Purchase(100)
+    :Set()
+    :LogAnalyticsEconomyEvent({
+        TransactionType = Enum.AnalyticsEconomyTransactionType.Purchase.Name
+    })
+    :EndQuery()</code></pre>
+                <p><strong>Note:</strong> If the amount fluctuation is zero and no explicit Amount is provided, the analytics event is silently skipped. Errors are logged as warnings but don't cancel the query.</p>
+            </div>
+
             <h2 id="important-caveats">Important Caveats</h2>
 
             <h3 id="when-set-is-required">When Set() is Required</h3>
@@ -1164,6 +1212,43 @@ end
 
 player:SendNotification("Successfully purchased an apple!")</code></pre>
 
+            <h3>Example 7: Complex Purchase Flow with Economy Analytics</h3>
+            <pre><code class="language-lua">local swordPrice = 500
+local swordSku = "sword_legendary_001"
+
+local purchaseResult = profile
+    :StartQuery()
+    -- Purchase the sword (Purchase automatically calls Set internally)
+    :Get("Stats>Coins")
+    :Purchase(swordPrice)
+    -- Log the economy event with Sku
+    :LogAnalyticsEconomyEvent({
+        Sku = swordSku
+    })
+    -- Add the sword to inventory
+    :Get("Items")
+    :FindOrInsert(
+        { id = 42, name = "Legendary Sword", amount = 0, sku = swordSku },
+        function(item)
+            return item.sku == swordSku
+        end
+    )
+    :Transform(function(element, cursor)
+        element.amount = element.amount + 1
+        return element
+    end)
+    :Set()
+    :EndQuery()
+
+if not purchaseResult:isSuccessful() then
+    player:SendNotification("Purchase failed: " .. purchaseResult.Message)
+    return
+end
+
+player:SendNotification("Successfully purchased a Legendary Sword!")
+-- Analytics event has been automatically logged with the Sku</code></pre>
+            <p><strong>Note:</strong> This example demonstrates logging economy analytics with a Sku identifier. The <code>LogAnalyticsEconomyEvent()</code> method automatically detects whether currency was gained or lost based on the difference between OldValue and CurrentValue. The Sku parameter helps track specific items or transactions in Roblox Analytics.</p>
+
             <h2 id="best-practices">Best Practices</h2>
             <ol>
                 <li><strong>Always check <code>isSuccessful()</code></strong> - Especially after <code>Purchase()</code> and <code>Find()</code></li>
@@ -1183,7 +1268,7 @@ player:SendNotification("Successfully purchased an apple!")</code></pre>
             </ol>
 
             <h2 id="forking">Forking</h2>
-            <p>If you find this module to be interesting and would like to contribute, simply fork it and add your new features. If you're planning on adding new chained-methods, please create proper unit testing for them in <code>Testing\Validators</code>.</p>
+            <p>If you find this module to be interesting and would like to contribute, simply fork it and add your new features. If you're planning on adding new chained-methods, please create proper unit testing for them in <code>src/Testing/Validators</code>.</p>
             <p>After any new additions, run and verify all tests to make sure the system still works fully.</p>
             <pre><code class="language-lua">local DataAPITest = require(script.DataAPITest)
 
