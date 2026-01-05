@@ -658,6 +658,15 @@ end</code></pre>
             </div>
 
             <div class="method-card">
+                <div class="method-signature">DataAPI:SetProfileDataModifiedHandler(handler: (profile: Profile.Profile, key: string) -> nil ): DataAPI</div>
+                <div class="method-description">Sets a handler function that is called whenever any profile data is modified. The handler receives the profile and the key path that was modified (e.g., <code>"Stats>Coins"</code>). Useful for integrating with data replication systems or external services.</div>
+                <pre><code class="language-lua">datastore:SetProfileDataModifiedHandler(function(profile, key)
+    print(`Profile {profile.ProfileKey} modified key: {key}`)
+    -- Integrate with River or other replication systems here
+end)</code></pre>
+            </div>
+
+            <div class="method-card">
                 <div class="method-signature">DataAPI:IsProfileActive(profileKey: string): boolean</div>
                 <div class="method-description">Checks if a profile is currently active (loaded and not released). Returns <code>true</code> if the profile exists and is active, <code>false</code> otherwise.</div>
                 <pre><code class="language-lua">if datastore:IsProfileActive(tostring(player.UserId)) then
@@ -1000,6 +1009,33 @@ end</code></pre>
                 <p><strong>Note:</strong> The output shows "Carry-over Key" which refers to CursorKey in the documentation terminology.</p>
             </div>
 
+            <h4>Read Operations</h4>
+
+            <div class="method-card">
+                <div class="method-signature">Profile:ReadAsync(key: string): DataEntry?</div>
+                <div class="method-description">Asynchronously reads a value from the profile without starting a query. Returns a read-only copy of the data. For tables, returns a deep copy to prevent accidental mutations. This method is safe to call outside of queries and is ideal for replicating data to clients.</div>
+                <div class="method-params">
+                    <h5>Parameters:</h5>
+                    <div class="param-item"><span class="param-name">key</span> - The key path to read (e.g., <code>"Stats>Coins"</code>)</div>
+                </div>
+                <p><strong>Returns:</strong> The value at the specified key, or <code>nil</code> if the key doesn't exist or an error occurred. Tables are returned as deep copies.</p>
+                <pre><code class="language-lua">-- Read data outside of a query (useful for replication)
+local coins = profile:ReadAsync("Stats>Coins")
+if coins then
+    ReplicateCoins:FireClient(player, coins)
+end
+
+-- Read a table (returns a deep copy)
+local items = profile:ReadAsync("Items")
+if items then
+    -- Safe to modify items locally - original data is not affected
+    ReplicateItems:FireClient(player, items)
+end</code></pre>
+                <div class="alert alert-info">
+                    <strong>ℹ️ Note:</strong> This method does not require a query and can be called at any time. It's designed for read-only operations and data replication. For modifications, use <code>Get()</code> within a query instead.
+                </div>
+            </div>
+
             <h4>Analytics Methods</h4>
 
             <div class="method-card">
@@ -1013,17 +1049,16 @@ end</code></pre>
                     <strong>⚠️ Important:</strong> This method only works on Player profiles (not generic profiles). It requires:
                     <ul style="margin-top: 0.5rem;">
                         <li>Cursor must be a number</li>
-                        <li>OldValue must be a number (requires calling <code>Set()</code> or <code>Update()</code> first)</li>
+                        <li>OldValue must be a number (automatically set by <code>Purchase()</code>, <code>Set()</code>, or <code>Update()</code>)</li>
                         <li>CursorKey must be set (automatically set after <code>Get()</code> or <code>Update()</code>)</li>
                     </ul>
                 </div>
                 <p><strong>Requires:</strong> Must be called after a currency operation that modified a numeric value.</p>
-                <pre><code class="language-lua">-- Log analytics after a purchase
+                <pre><code class="language-lua">-- Log analytics after a purchase (Purchase automatically calls Set internally)
 local result = profile
     :StartQuery()
     :Get("Stats>Coins")
     :Purchase(100)
-    :Set()
     :LogAnalyticsEconomyEvent({
         TransactionType = Enum.AnalyticsEconomyTransactionType.Purchase.Name
     })
