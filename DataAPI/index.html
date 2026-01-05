@@ -667,9 +667,15 @@ end)</code></pre>
             </div>
 
             <div class="method-card">
-                <div class="method-signature">DataAPI:IsProfileActive(profileKey: string): boolean</div>
+                <div class="method-signature">DataAPI:IsProfileActive(profileKey: Player | string): boolean</div>
                 <div class="method-description">Checks if a profile is currently active (loaded and not released). Returns <code>true</code> if the profile exists and is active, <code>false</code> otherwise.</div>
-                <pre><code class="language-lua">if datastore:IsProfileActive(tostring(player.UserId)) then
+                <pre><code class="language-lua">-- For player data, you can pass the Player object directly
+if datastore:IsProfileActive(player) then
+    print("Profile is active!")
+end
+
+-- Or pass the profile key as a string
+if datastore:IsProfileActive(tostring(player.UserId)) then
     print("Profile is active!")
 end</code></pre>
             </div>
