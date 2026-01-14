@@ -609,8 +609,16 @@ end</code></pre>
             </div>
 
             <div class="method-card">
-                <div class="method-signature">DataAPI:GetProfile(profileKey: Player | string): Profile?</div>
-                <div class="method-description">Gets an already-loaded profile without loading it.</div>
+                <div class="method-signature">DataAPI:GetProfileAsync(profileKey: Player | string): Profile?</div>
+                <div class="method-description">Gets an already-loaded profile without loading it. Returns <code>nil</code> if the profile is not currently loaded.</div>
+            </div>
+
+            <div class="method-card">
+                <div class="method-signature">DataAPI:GetProfileSync(profileKey: Player | string): Profile</div>
+                <div class="method-description">Gets an already-loaded profile synchronously. Waits up to 3 seconds for the profile to become available. Throws an error if the profile is not loaded within the timeout period.</div>
+                <div class="alert alert-warning">
+                    <strong>⚠️ Important:</strong> This method will yield the thread while waiting for the profile. Use <code>GetProfileAsync</code> for non-blocking access.
+                </div>
             </div>
 
             <div class="method-card">
