@@ -1,0 +1,1577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Network Documentation</title>
+    <!-- Highlight.js CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #0d1117;
+            --bg-secondary: #161b22;
+            --bg-tertiary: #21262d;
+            --text-primary: #c9d1d9;
+            --text-secondary: #8b949e;
+            --text-accent: #58a6ff;
+            --border-color: #30363d;
+            --code-bg: #161b22;
+            --code-border: #30363d;
+            --accent: #58a6ff;
+            --accent-hover: #79c0ff;
+            --success: #3fb950;
+            --warning: #d29922;
+            --error: #f85149;
+            --shadow: rgba(0, 0, 0, 0.3);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            gap: 2rem;
+        }
+
+        /* Sidebar Navigation */
+        .sidebar {
+            position: sticky;
+            top: 2rem;
+            height: fit-content;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1.5rem;
+            max-height: calc(100vh - 4rem);
+            overflow-y: auto;
+        }
+
+        .sidebar::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .sidebar::-webkit-scrollbar-track {
+            background: var(--bg-primary);
+            border-radius: 4px;
+        }
+
+        .sidebar::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 4px;
+        }
+
+        .sidebar::-webkit-scrollbar-thumb:hover {
+            background: var(--text-secondary);
+        }
+
+        .sidebar h3 {
+            color: var(--text-accent);
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .sidebar ul {
+            list-style: none;
+        }
+
+        .sidebar ul li {
+            margin-bottom: 0.5rem;
+        }
+
+        .sidebar a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            display: block;
+            padding: 0.4rem 0.6rem;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+        }
+
+        .sidebar a:hover {
+            color: var(--text-accent);
+            background: var(--bg-tertiary);
+        }
+
+        .sidebar a.active {
+            color: var(--text-accent);
+            background: var(--bg-tertiary);
+            font-weight: 500;
+        }
+
+        /* Main Content */
+        .content {
+            min-width: 0;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+            font-weight: 600;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 1rem;
+        }
+
+        h2 {
+            font-size: 1.8rem;
+            margin-top: 3rem;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+            font-weight: 600;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--border-color);
+            scroll-margin-top: 2rem;
+        }
+
+        h3 {
+            font-size: 1.4rem;
+            margin-top: 2rem;
+            margin-bottom: 0.8rem;
+            color: var(--text-accent);
+            font-weight: 600;
+        }
+
+        h4 {
+            font-size: 1.1rem;
+            margin-top: 1.5rem;
+            margin-bottom: 0.6rem;
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+
+        p {
+            margin-bottom: 1rem;
+            color: var(--text-secondary);
+        }
+
+        ul, ol {
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--text-secondary);
+        }
+
+        li {
+            margin-bottom: 0.5rem;
+        }
+
+        /* Code Blocks */
+        pre {
+            background: var(--code-bg);
+            border: 1px solid var(--code-border);
+            border-radius: 6px;
+            padding: 1rem;
+            overflow-x: auto;
+            margin: 1rem 0;
+            position: relative;
+        }
+
+        pre code {
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.9rem;
+            color: var(--text-primary);
+            line-height: 1.5;
+        }
+
+        code {
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.9em;
+            background: var(--code-bg);
+            padding: 0.2rem 0.4rem;
+            border-radius: 3px;
+            color: var(--accent);
+            border: 1px solid var(--code-border);
+        }
+
+        /* Syntax Highlighting - Override Highlight.js theme to match our design */
+        .hljs {
+            background: var(--code-bg) !important;
+            color: var(--text-primary) !important;
+        }
+        
+        .hljs-keyword,
+        .hljs-selector-tag,
+        .hljs-literal,
+        .hljs-section,
+        .hljs-link { 
+            color: #ff7b72; 
+        }
+        
+        .hljs-function,
+        .hljs-title.function_ { 
+            color: #d2a8ff; 
+        }
+        
+        .hljs-string,
+        .hljs-attr { 
+            color: #a5d6ff; 
+        }
+        
+        .hljs-number,
+        .hljs-literal { 
+            color: #79c0ff; 
+        }
+        
+        .hljs-comment,
+        .hljs-quote { 
+            color: #8b949e; 
+            font-style: italic; 
+        }
+        
+        .hljs-type,
+        .hljs-built_in { 
+            color: #ffa657; 
+        }
+        
+        .hljs-variable,
+        .hljs-template-variable { 
+            color: #c9d1d9; 
+        }
+        
+        .hljs-operator { 
+            color: #ff7b72; 
+        }
+        
+        .hljs-punctuation { 
+            color: var(--text-secondary); 
+        }
+        
+        /* Ensure code blocks have proper styling */
+        pre code.hljs {
+            display: block;
+            overflow-x: auto;
+            padding: 1rem;
+        }
+
+        /* Badges and Tags */
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.6rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-left: 0.5rem;
+        }
+
+        .badge-warning {
+            background: rgba(210, 153, 34, 0.2);
+            color: var(--warning);
+            border: 1px solid rgba(210, 153, 34, 0.3);
+        }
+
+        .badge-critical {
+            background: rgba(248, 81, 73, 0.2);
+            color: var(--error);
+            border: 1px solid rgba(248, 81, 73, 0.3);
+        }
+
+        .badge-important {
+            background: rgba(88, 166, 255, 0.2);
+            color: var(--accent);
+            border: 1px solid rgba(88, 166, 255, 0.3);
+        }
+
+        /* Alert Boxes */
+        .alert {
+            padding: 1rem;
+            border-radius: 6px;
+            margin: 1rem 0;
+            border-left: 4px solid;
+        }
+
+        .alert-warning {
+            background: rgba(210, 153, 34, 0.1);
+            border-color: var(--warning);
+            color: var(--text-secondary);
+        }
+
+        .alert-critical {
+            background: rgba(248, 81, 73, 0.1);
+            border-color: var(--error);
+            color: var(--text-secondary);
+        }
+
+        .alert-info {
+            background: rgba(88, 166, 255, 0.1);
+            border-color: var(--accent);
+            color: var(--text-secondary);
+        }
+
+        /* Method Cards */
+        .method-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            transition: all 0.2s ease;
+        }
+
+        .method-card:hover {
+            border-color: var(--accent);
+            box-shadow: 0 4px 12px var(--shadow);
+        }
+
+        .method-signature {
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            color: var(--accent);
+            font-size: 1rem;
+            margin-bottom: 0.8rem;
+            font-weight: 600;
+        }
+
+        .method-description {
+            color: var(--text-secondary);
+            margin-bottom: 0.8rem;
+        }
+
+        .method-params {
+            margin-top: 1rem;
+        }
+
+        .method-params h5 {
+            color: var(--text-primary);
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .param-item {
+            margin-left: 1rem;
+            margin-bottom: 0.5rem;
+            color: var(--text-secondary);
+        }
+
+        .param-name {
+            color: var(--accent);
+            font-weight: 500;
+        }
+
+        /* Table */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        th {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            padding: 0.8rem;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        td {
+            padding: 0.8rem;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-secondary);
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover {
+            background: var(--bg-tertiary);
+        }
+
+        /* Intro Section */
+        .intro {
+            background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .intro p {
+            font-size: 1.1rem;
+            color: var(--text-primary);
+            line-height: 1.8;
+        }
+
+        /* Scroll to Top Button */
+        .scroll-top {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: var(--accent);
+            color: white;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 12px var(--shadow);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .scroll-top:hover {
+            background: var(--accent-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px var(--shadow);
+        }
+
+        .scroll-top.visible {
+            display: flex;
+        }
+
+        /* Responsive */
+        @media (max-width: 968px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                position: relative;
+                top: 0;
+                max-height: none;
+            }
+        }
+
+        /* Smooth Scroll */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Link Styles */
+        a {
+            color: var(--accent);
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        a:hover {
+            color: var(--accent-hover);
+            text-decoration: underline;
+        }
+
+        /* Section Dividers */
+        .section-divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--border-color), transparent);
+            margin: 3rem 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <aside class="sidebar">
+            <h3>Navigation</h3>
+            <ul>
+                <li><a href="#introduction">Introduction</a></li>
+                <li><a href="#quick-start">Quick Start</a></li>
+                <li><a href="#core-concepts">Core Concepts</a></li>
+                <li><a href="#api-reference">API Reference</a></li>
+                <li><a href="#server-methods">Server Methods</a></li>
+                <li><a href="#client-methods">Client Methods</a></li>
+                <li><a href="#shared-methods">Shared Methods</a></li>
+                <li><a href="#constants">Constants</a></li>
+                <li><a href="#types">Types</a></li>
+                <li><a href="#exceptions">Exceptions</a></li>
+                <li><a href="#examples">Examples</a></li>
+                <li><a href="#best-practices">Best Practices</a></li>
+            </ul>
+        </aside>
+
+        <main class="content">
+            <h1>Network Documentation</h1>
+            
+            <div class="intro">
+                <p>A powerful, type-safe networking system for Roblox that simplifies client-server communication. Network provides a tag-based messaging system with support for reliable and unreliable RemoteEvents, RemoteFunctions, and automatic remote management. It handles both server-to-client and client-to-server communication with built-in validation and error handling.</p>
+            </div>
+
+            <h2 id="introduction">Introduction</h2>
+            <p>Network (also referred to as Replicate) is a singleton module that manages client-server communication in Roblox. It uses a tag-based system where messages are sent and received using string tags, making it easy to organize and handle different types of network events.</p>
+            
+            <h3>Key Features</h3>
+            <ul>
+                <li><strong>Tag-based messaging</strong> - Organize events using string tags</li>
+                <li><strong>Automatic remote management</strong> - Remotes are created and managed automatically</li>
+                <li><strong>Multiple remote types</strong> - Support for RemoteEvent, UnreliableRemoteEvent, and RemoteFunction</li>
+                <li><strong>Client channels</strong> - Dedicated channels for client-to-server communication</li>
+                <li><strong>Request/Response pattern</strong> - Built-in fetch system for requesting data from server</li>
+                <li><strong>Type-safe</strong> - Full TypeScript/Luau type definitions</li>
+            </ul>
+
+            <h2 id="quick-start">Quick Start</h2>
+            
+            <h3>Server Setup</h3>
+            <pre><code class="language-lua">local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Network = require(ReplicatedStorage.Network)
+
+-- Listen for client messages
+Network:listen({"PlayerJoined"}, function(playerName, playerId)
+    print(`Player {playerName} (ID: {playerId}) joined!`)
+end)
+
+-- Send data to a specific player
+Network:push(player, {"CoinsUpdated"}, 150)
+
+-- Send data to all players
+Network:pushAll({"ServerAnnouncement"}, "Welcome to the game!")</code></pre>
+
+            <h3>Client Setup</h3>
+            <pre><code class="language-lua">local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Players = game:GetService("Players")
+local Network = require(ReplicatedStorage.Network)
+
+-- Listen for server messages
+Network:listen({"CoinsUpdated"}, function(newCoins)
+    print(`Your coins: {newCoins}`)
+end)
+
+-- Send data to server
+Network:fire("PlayerJoined", Players.LocalPlayer.Name, Players.LocalPlayer.UserId)
+
+-- Listen to data from server
+Network:listen({"PlayerStats"}, function(stats)
+    print(`Stats received: {stats}`)
+end)
+</code></pre>
+
+            <h2 id="core-concepts">Core Concepts</h2>
+
+            <h3>Tags</h3>
+            <p>Tags are string identifiers used to categorize and route messages. They act as event names in the Network system:</p>
+            <ul>
+                <li><strong>Tag format</strong> - Must be a non-empty string</li>
+                <li><strong>Multiple tags</strong> - You can send messages to multiple tags simultaneously</li>
+                <li><strong>Tag validation</strong> - Tags are automatically validated (must be strings, no duplicates)</li>
+            </ul>
+            <pre><code class="language-lua">-- Single tag
+Network:push(player, {"CoinsUpdated"}, 100)
+
+-- Multiple tags (all listeners for each tag receive the message)
+Network:push(player, {"CoinsUpdated", "StatsChanged"}, 100)</code></pre>
+
+            <h3>Remote Types</h3>
+            <p>Network supports three types of Roblox remotes:</p>
+            <ul>
+                <li><strong>RemoteEvent</strong> - Reliable, one-way communication</li>
+                <li><strong>UnreliableRemoteEvent</strong> - Fast but unreliable, one-way communication</li>
+                <li><strong>RemoteFunction</strong> - Reliable, two-way communication (request/response)</li>
+            </ul>
+
+            <h3>Server-to-Client Communication</h3>
+            <p>Server can send messages to clients using tags. Remotes are automatically created in the <code>Remotes</code> folder:</p>
+            <pre><code class="language-lua">-- Server sends to client
+Network:push(player, {"CoinsUpdated"}, 150)
+
+-- Client listens
+Network:listen({"CoinsUpdated"}, function(newCoins)
+    print(`Coins: {newCoins}`)
+end)</code></pre>
+
+            <h3>Client-to-Server Communication</h3>
+            <p>Clients communicate with the server through <strong>channels</strong>. Channels must be registered on the server first:</p>
+            <pre><code class="language-lua">-- Server: Register a channel
+Network:addClientChannel({"PlayerAction"})
+
+-- Server: Handle channel messages
+Network:handle("PlayerAction", function(player, action, data)
+    print(`Player {player.Name} performed: {action}`)
+end)
+
+-- Client: Fire to server
+Network:fire("PlayerAction", "Jump", { height = 10 })</code></pre>
+
+            <h3>Request/Response Pattern</h3>
+            <p>Network provides a built-in fetch system for requesting on-demand data from the server. The <code>request</code> method does <strong>not</strong> return data immediately - you must set up a listener to receive the response:</p>
+            <pre><code class="language-lua">-- Server: Set up default handler
+Network:addDefault({"PlayerStats"}, function(player)
+    return {
+        Coins = 100,
+        Level = 5
+    }
+end)
+
+-- Client: Set up listener FIRST, then request data
+Network:listen({"PlayerStats"}, function(stats)
+    print(`Coins: {stats.Coins}, Level: {stats.Level}`)
+end)
+
+-- Request on-demand data (returns nil, data comes via listener)
+Network:request({"PlayerStats"})
+-- Server automatically responds by pushing data using the same tags</code></pre>
+
+            <h2 id="api-reference">API Reference</h2>
+            
+            <p>Network is a singleton module. You don't need to create instances - simply require the module and use its methods directly.</p>
+            
+            <div class="alert alert-info">
+                <strong>ℹ️ Note:</strong> Network automatically initializes when first required. The module returns the singleton instance.
+            </div>
+
+            <h3 id="server-methods">Server Methods</h3>
+            
+            <div class="method-card">
+                <div class="method-signature">Network:push(player: Player, tags: { string }, ...): nil</div>
+                <div class="method-description">Sends a reliable message to a specific player using the specified tags. Creates RemoteEvents automatically if they don't exist.</div>
+                <div class="method-params">
+                    <h5>Parameters:</h5>
+                    <div class="param-item"><span class="param-name">player</span> - The target player</div>
+                    <div class="param-item"><span class="param-name">tags</span> - Array of tag strings to send the message to</div>
+                    <div class="param-item"><span class="param-name">...</span> - Variable arguments to send with the message</div>
+                </div>
+                <pre><code class="language-lua">-- Send coins update to a player
+Network:push(player, {"CoinsUpdated"}, 150)
+
+-- Send multiple values
+Network:push(player, {"PlayerData"}, playerName, playerLevel, playerXP)</code></pre>
+            </div>
+
+            <div class="method-card">
+                <div class="method-signature">Network:pushUnreliable(player: Player, tags: { string }, ...): nil</div>
+                <div class="method-description">Sends an unreliable (fast but may be dropped) message to a specific player. Creates UnreliableRemoteEvents automatically if they don't exist. Unreliable remotes have a 0.25 second delay before firing to allow for potential creation.</div>
+                <div class="method-params">
+                    <h5>Parameters:</h5>
+                    <div class="param-item"><span class="param-name">player</span> - The target player</div>
+                    <div class="param-item"><span class="param-name">tags</span> - Array of tag strings</div>
+                    <div class="param-item"><span class="param-name">...</span> - Variable arguments to send</div>
+                </div>
+                <pre><code class="language-lua">-- Send position updates (unreliable is fine for frequent updates)
+Network:pushUnreliable(player, {"PositionUpdate"}, x, y, z)</code></pre>
+            </div>
+
+            <div class="method-card">
+                <div class="method-signature">Network:pushAll(tags: { string }, ...): nil</div>
+                <div class="method-description">Sends a reliable message to all players currently in the game using the specified tags.</div>
+                <div class="method-params">
+                    <h5>Parameters:</h5>
+                    <div class="param-item"><span class="param-name">tags</span> - Array of tag strings</div>
+                    <div class="param-item"><span class="param-name">...</span> - Variable arguments to send</div>
+                </div>
+                <pre><code class="language-lua">-- Broadcast server announcement to all players
+Network:pushAll({"ServerAnnouncement"}, "Server maintenance in 5 minutes")</code></pre>
+            </div>
+
+            <div class="method-card">
+                <div class="method-signature">Network:pushAllUnreliable(tags: { string }, ...): nil</div>
+                <div class="method-description">Sends an unreliable message to all players currently in the game.</div>
+                <div class="method-params">
+                    <h5>Parameters:</h5>
+                    <div class="param-item"><span class="param-name">tags</span> - Array of tag strings</div>
+                    <div class="param-item"><span class="param-name">...</span> - Variable arguments to send</div>
+                </div>
+                <pre><code class="language-lua">-- Broadcast frequent updates to all players
+Network:pushAllUnreliable({"WorldStateUpdate"}, worldData)</code></pre>
+            </div>
+
+            <div class="method-card">
+                <div class="method-signature">Network:delay(player: Player, tags: { string }, ...): () -> nil</div>
+                <div class="method-description">Creates a delayed function that will send a message when called. Useful for scheduling messages or creating reusable send functions.</div>
+                <div class="method-params">
+                    <h5>Parameters:</h5>
+                    <div class="param-item"><span class="param-name">player</span> - The target player</div>
+                    <div class="param-item"><span class="param-name">tags</span> - Array of tag strings</div>
+                    <div class="param-item"><span class="param-name">...</span> - Variable arguments to send</div>
+                </div>
+                <p><strong>Returns:</strong> A function that, when called, sends the message.</p>
+                <pre><code class="language-lua">-- Create a delayed send function
+local sendCoinsUpdate = Network:delay(player, {"CoinsUpdated"}, 150)
+
+-- Later, send the message
+sendCoinsUpdate()</code></pre>
+            </div>
+
+            <div class="method-card">
+                <div class="method-signature">Network:delayAll(tags: { string }, ...): () -> nil</div>
+                <div class="method-description">Creates a delayed function that will send a message to all players when called.</div>
+                <div class="method-params">
+                    <h5>Parameters:</h5>
+                    <div class="param-item"><span class="param-name">tags</span> - Array of tag strings</div>
+                    <div class="param-item"><span class="param-name">...</span> - Variable arguments to send</div>
+                </div>
+                <p><strong>Returns:</strong> A function that, when called, sends the message to all players.</p>
+            </div>
+
+            <div class="method-card">
+                <div class="method-signature">Network:serverListen(player: Player, tags: { string }, callback: ListenerCallback): Unsubscribe</div>
+                <div class="method-description">Listens for messages sent from the server to a specific player using the specified tags. This listens to server pushes (via <code>push</code>, <code>pushAll</code>, etc.) sent to this player, not client messages sent via <code>fire</code> or <code>fireUnreliable</code>. For handling client-to-server messages, use <code>handle</code> or <code>handleSync</code> instead.</div>
+                <div class="method-params">
+                    <h5>Parameters:</h5>
+                    <div class="param-item"><span class="param-name">player</span> - The player to listen for messages sent to</div>
+                    <div class="param-item"><span class="param-name">tags</span> - Array of tag strings to listen for</div>
+                    <div class="param-item"><span class="param-name">callback</span> - Function called when message is received: <code>(...any) -> any?</code></div>
+                </div>
+                <p><strong>Returns:</strong> An unsubscribe function to stop listening.</p>
+                <div class="alert alert-warning">
+                    <strong>⚠️ Important:</strong> This method only listens to server pushes (messages sent from server to client), not client fires. To handle client messages, use <code>handle</code> or <code>handleSync</code>.
+                </div>
+                <pre><code class="language-lua">-- Server: Listen for messages sent to a specific player
+local unsubscribe = Network:serverListen(player, {"CoinsUpdated"}, function(newCoins)
+    print(`Message sent to {player.Name}: {newCoins} coins`)
+end)
+
+-- Send a message that will trigger the listener above
+Network:push(player, {"CoinsUpdated"}, 150)
+
+-- Later, stop listening
+unsubscribe()</code></pre>
+            </div>
+
+            <div class="method-card">
+                <div class="method-signature">Network:addClientChannel(channels: { string }): boolean</div>
+                <div class="method-description">Registers client channels that clients can use to communicate with the server. Creates RemoteEvent, UnreliableRemoteEvent, and RemoteFunction for each channel in the ClientRemotes folder.</div>
+                <div class="method-params">
+                    <h5>Parameters:</h5>
+                    <div class="param-item"><span class="param-name">channels</span> - Array of channel name strings</div>
+                </div>
+                <p><strong>Returns:</strong> <code>true</code> on success, throws <code>DuplicateChannelException</code> if channel already exists.</p>
+                <pre><code class="language-lua">-- Register client channels
+Network:addClientChannel({"PlayerAction", "ChatMessage", "PurchaseItem"})</code></pre>
+            </div>
+
+            <div class="method-card">
+                <div class="method-signature">Network:handle(channel: string, callback: RemoteCallback): Unsubscribe</div>
+                <div class="method-description">Handles messages sent from clients via <code>fire</code> or <code>fireUnreliable</code> on the specified channel. Listens to both reliable and unreliable remotes for the channel.</div>
+                <div class="method-params">
+                    <h5>Parameters:</h5>
+                    <div class="param-item"><span class="param-name">channel</span> - The channel name (must be registered via <code>addClientChannel</code>)</div>
+                    <div class="param-item"><span class="param-name">callback</span> - Function called when message is received: <code>(player: Player, ...any) -> any?</code></div>
+                </div>
+                <p><strong>Returns:</strong> An unsubscribe function to stop handling.</p>
+                <pre><code class="language-lua">-- Handle client messages on a channel
+Network:addClientChannel({"PlayerAction"})
+
+local unsubscribe = Network:handle("PlayerAction", function(player, action, data)
+    print(`{player.Name} performed: {action}`)
+end)</code></pre>
+            </div>
+
+            <div class="method-card">
+                <div class="method-signature">Network:handleSync(channel: string, callback: RemoteCallback): Unsubscribe</div>
+                <div class="method-description">Handles synchronous requests from clients via <code>invoke</code> on the specified channel. Uses RemoteFunction for two-way communication. Only one handler can be registered per channel. <strong>Note:</strong> For data replication, use <code>request</code> and <code>addDefault</code> instead. <code>handleSync</code> is best for operations that require immediate synchronous responses, such as validation checks or critical operations.</div>
+                <div class="method-params">
+                    <h5>Parameters:</h5>
+                    <div class="param-item"><span class="param-name">channel</span> - The channel name (must be registered via <code>addClientChannel</code>)</div>
+                    <div class="param-item"><span class="param-name">callback</span> - Function called when request is received: <code>(player: Player, ...any) -> any?</code></div>
+                </div>
+                <p><strong>Returns:</strong> An unsubscribe function to stop handling. Throws <code>ChannelAlreadyHandledException</code> if channel already has a handler.</p>
+                <div class="alert alert-info">
+                    <strong>ℹ️ Note:</strong> For data replication, use <code>request</code> and <code>addDefault</code> instead. <code>handleSync</code> yields the client thread and should only be used when you need an immediate synchronous response.
+                </div>
+                <pre><code class="language-lua">-- Handle synchronous validation check (not for data replication)
+Network:addClientChannel({"ValidatePurchase"})
+
+Network:handleSync("ValidatePurchase", function(player, itemId, price)
+    -- Synchronous validation that needs immediate response
+    local canAfford = CheckPlayerCanAfford(player, price)
+    if not canAfford then
+        return false, "Insufficient funds"
+    end
+    
+    -- Process purchase immediately
+    ProcessPurchase(player, itemId, price)
+    return true, "Purchase successful"
+end)</code></pre>
+            </div>
+
+            <div class="method-card">
+                <div class="method-signature">Network:onRequest(handler: RequestHandlerCallback): Network</div>
+                <div class="method-description">Sets a custom request handler that transforms the player object before passing it to default handlers. Used with the <code>request</code> system. This is particularly useful for integrating with DataAPI to inject a player profile, allowing default handlers to access profile data directly.</div>
+                <div class="method-params">
+                    <h5>Parameters:</h5>
+                    <div class="param-item"><span class="param-name">handler</span> - Function that transforms player: <code>(player: Player) -> any?</code></div>
+                </div>
+                <p><strong>Returns:</strong> <code>self</code> for chaining.</p>
+                <pre><code class="language-lua">-- Example: Use with DataAPI to inject player profile
+local DataAPI = require(ReplicatedStorage.DataAPI)
+local Network = require(ReplicatedStorage.Network)
+
+-- Create DataAPI instance with schema
+local datastore = DataAPI.new("PlayerData", {
+    Coins = 0,
+    Level = 0,
+    Inventory = {}
+}, true)
+
+-- Inject player profile for default handlers
+Network:onRequest(function(player)
+    return datastore:GetProfileSync(player) -- Returns the player's DataAPI profile
+end)
+
+-- Now default handlers receive the profile instead of player object
+Network:addDefault({"Coins"}, function(profile)
+    return profile:ReadAsync("Coins")
+end)
+
+Network:addDefault({"Level"}, function(profile)
+    return profile:ReadAsync("Level")
+end)
+
+Network:addDefault({"Inventory"}, function(profile)
+    return profile:ReadAsync("Inventory")
+end)</code></pre>
+            </div>
+
+            <div class="method-card">
+                <div class="method-signature">Network:addDefault(tags: { string }, callback: RequestHandlerCallback): Network</div>
+                <div class="method-description">Registers default handlers for tags that can be requested by clients using <code>request</code>. Creates RemoteEvents for the tags if they don't exist.</div>
+                <div class="method-params">
+                    <h5>Parameters:</h5>
+                    <div class="param-item"><span class="param-name">tags</span> - Array of tag strings</div>
+                    <div class="param-item"><span class="param-name">callback</span> - Function that returns data: <code>(transformedPlayer: any) -> any?</code></div>
+                </div>
+                <p><strong>Returns:</strong> <code>self</code> for chaining.</p>
+                <pre><code class="language-lua">-- Register default handlers
+Network:addDefault({"PlayerStats", "Inventory"}, function(player)
+    return {
+        Coins = 100,
+        Level = 5,
+        Items = {}
+    }
+end)
+
+-- Clients can now request this data
+-- Network:request({"PlayerStats"})</code></pre>
+            </div>
+
+            <div class="method-card">
+                <div class="method-signature">Network:getDefaultRemote(): RemoteEvent</div>
+                <div class="method-description">Gets the default RemoteEvent used for the request system. This is the <code>_defaultReplicateRemote</code> RemoteEvent.</div>
+                <p><strong>Returns:</strong> The default RemoteEvent instance.</p>
+            </div>
+
+            <h3 id="client-methods">Client Methods</h3>
+
+            <div class="method-card">
+                <div class="method-signature">Network:fire(channel: string, ...): nil</div>
+                <div class="method-description">Sends a reliable message to the server on the specified channel. The channel must be registered on the server via <code>addClientChannel</code>.</div>
+                <div class="method-params">
+                    <h5>Parameters:</h5>
+                    <div class="param-item"><span class="param-name">channel</span> - The channel name</div>
+                    <div class="param-item"><span class="param-name">...</span> - Variable arguments to send</div>
+                </div>
+                <div class="alert alert-warning">
+                    <strong>⚠️ Client Only:</strong> This method can only be called on the client. Throws <code>ClientOnlyMethodException</code> if called on server.
+                </div>
+                <pre><code class="language-lua">-- Send message to server
+Network:fire("PlayerAction", "Jump", { height = 10 })</code></pre>
+            </div>
+
+            <div class="method-card">
+                <div class="method-signature">Network:fireUnreliable(channel: string, ...): nil</div>
+                <div class="method-description">Sends an unreliable message to the server on the specified channel.</div>
+                <div class="method-params">
+                    <h5>Parameters:</h5>
+                    <div class="param-item"><span class="param-name">channel</span> - The channel name</div>
+                    <div class="param-item"><span class="param-name">...</span> - Variable arguments to send</div>
+                </div>
+                <div class="alert alert-warning">
+                    <strong>⚠️ Client Only:</strong> This method can only be called on the client.
+                </div>
+            </div>
+
+            <div class="method-card">
+                <div class="method-signature">Network:invoke(channel: string, ...): any?</div>
+                <div class="method-description">Sends a synchronous request to the server on the specified channel and waits for a response. Uses RemoteFunction for two-way communication.</div>
+                <div class="method-params">
+                    <h5>Parameters:</h5>
+                    <div class="param-item"><span class="param-name">channel</span> - The channel name (must have a <code>handleSync</code> handler on server)</div>
+                    <div class="param-item"><span class="param-name">...</span> - Variable arguments to send</div>
+                </div>
+                <p><strong>Returns:</strong> The value returned by the server's <code>handleSync</code> callback.</p>
+                <div class="alert alert-warning">
+                    <strong>⚠️ Client Only:</strong> This method can only be called on the client. This method will yield the thread until the server responds.
+                </div>
+                <pre><code class="language-lua">-- Request data from server synchronously
+local playerData = Network:invoke("GetPlayerData")
+print(`Coins: {playerData.Coins}`)</code></pre>
+            </div>
+
+            <div class="method-card">
+                <div class="method-signature">Network:request(tags: { string }): nil</div>
+                <div class="method-description">Requests on-demand data from the server for the specified tags. The server must have default handlers registered via <code>addDefault</code> for these tags. This method does <strong>not</strong> return data immediately - you must set up a client listener using <code>listen</code> to receive the response. The server will automatically respond by pushing the data back to the client using the same tags.</div>
+                <div class="method-params">
+                    <h5>Parameters:</h5>
+                    <div class="param-item"><span class="param-name">tags</span> - Array of tag strings to request</div>
+                </div>
+                <div class="alert alert-warning">
+                    <strong>⚠️ Client Only:</strong> This method can only be called on the client. This method does not return data - you must set up a listener to receive the response.
+                </div>
+                <div class="alert alert-info">
+                    <strong>ℹ️ Note:</strong> This is designed for on-demand data fetching. Set up your listener <strong>before</strong> calling <code>request</code> to ensure you receive the response.
+                </div>
+                <pre><code class="language-lua">-- Set up listener FIRST to receive the response
+Network:listen({"PlayerStats"}, function(stats)
+    print(`Coins: {stats.Coins}`)
+    UpdateUI(stats)
+end)
+
+-- Then request the data (server will push response using same tags)
+Network:request({"PlayerStats"})
+
+-- Note: request() returns nil, data comes via the listener callback</code></pre>
+            </div>
+
+            <h3 id="shared-methods">Shared Methods</h3>
+
+            <div class="method-card">
+                <div class="method-signature">Network:listen(tags: { string }, callback: ListenerCallback): Unsubscribe</div>
+                <div class="method-description">Listens for messages sent from the server using the specified tags. Works on both client and server (server listens to client messages sent via tags).</div>
+                <div class="method-params">
+                    <h5>Parameters:</h5>
+                    <div class="param-item"><span class="param-name">tags</span> - Array of tag strings to listen for</div>
+                    <div class="param-item"><span class="param-name">callback</span> - Function called when message is received: <code>(...any) -> any?</code></div>
+                </div>
+                <p><strong>Returns:</strong> An unsubscribe function to stop listening.</p>
+                <pre><code class="language-lua">-- Client: Listen for server messages
+local unsubscribe = Network:listen({"CoinsUpdated", "LevelUp"}, function(newCoins, newLevel)
+    print(`Coins: {newCoins}, Level: {newLevel}`)
+end)
+
+-- Server: Listen for client messages (sent via push/pushAll)
+Network:listen({"PlayerJoined"}, function(playerName, playerId)
+    print(`Player {playerName} joined`)
+end)</code></pre>
+            </div>
+
+            <div class="method-card">
+                <div class="method-signature">Network:setFlag(flag: string, value: boolean): Network</div>
+                <div class="method-description">Sets a configuration flag. Currently available flags: <code>CLIENT_PRINT_ON_NO_LISTENERS</code> (default: <code>true</code>).</div>
+                <div class="method-params">
+                    <h5>Parameters:</h5>
+                    <div class="param-item"><span class="param-name">flag</span> - The flag name</div>
+                    <div class="param-item"><span class="param-name">value</span> - The flag value</div>
+                </div>
+                <p><strong>Returns:</strong> <code>self</code> for chaining.</p>
+                <pre><code class="language-lua">-- Disable warning when no listeners are registered
+Network:setFlag("CLIENT_PRINT_ON_NO_LISTENERS", false)</code></pre>
+            </div>
+
+            <h2 id="constants">Constants</h2>
+            
+            <h3>Attributes</h3>
+            <p>Constants used for RemoteFunction attributes:</p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Constant</th>
+                        <th>Value</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>IS_SYNC_HANDLED</code></td>
+                        <td><code>"__is_sync_handled"</code></td>
+                        <td>Attribute set on RemoteFunctions to track if they have a sync handler registered</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>RemoteTypes</h3>
+            <p>Constants for Roblox remote class names:</p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Constant</th>
+                        <th>Value</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>REMOTE</code></td>
+                        <td><code>"RemoteEvent"</code></td>
+                        <td>Reliable RemoteEvent class name</td>
+                    </tr>
+                    <tr>
+                        <td><code>UNRELIABLE</code></td>
+                        <td><code>"UnreliableRemoteEvent"</code></td>
+                        <td>Unreliable RemoteEvent class name</td>
+                    </tr>
+                    <tr>
+                        <td><code>REMOTE_FUNCTION</code></td>
+                        <td><code>"RemoteFunction"</code></td>
+                        <td>RemoteFunction class name for synchronous communication</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Requests</h3>
+            <p>Constants for request types in the request system:</p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Constant</th>
+                        <th>Value</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>FETCH</code></td>
+                        <td><code>1</code></td>
+                        <td>Request type for fetching data from server default handlers</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Settings</h3>
+            <p>Module configuration constants:</p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Constant</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>MODULE_NAME</code></td>
+                        <td>The name of the Network module (used in error messages)</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2 id="types">Types</h2>
+            
+            <p>Network uses TypeScript/Luau type definitions for type safety. All types are exported from <code>Types/TReplicate.lua</code>:</p>
+
+            <div class="method-card">
+                <div class="method-signature">RequestHandlerCallback</div>
+                <div class="method-description">Callback function type for request handlers that transform player objects.</div>
+                <pre><code class="language-lua">type RequestHandlerCallback = (player: Player) -> any?</code></pre>
+                <p><strong>Used in:</strong> <code>onRequest</code>, <code>addDefault</code></p>
+            </div>
+
+            <div class="method-card">
+                <div class="method-signature">ListenerCallback</div>
+                <div class="method-description">Callback function type for message listeners.</div>
+                <pre><code class="language-lua">type ListenerCallback = (...any) -> any?</code></pre>
+                <p><strong>Used in:</strong> <code>listen</code>, <code>serverListen</code></p>
+            </div>
+
+            <div class="method-card">
+                <div class="method-signature">RemoteCallback</div>
+                <div class="method-description">Callback function type for channel handlers that receive player and message data.</div>
+                <pre><code class="language-lua">type RemoteCallback = (player: Player, ...any) -> any?</code></pre>
+                <p><strong>Used in:</strong> <code>handle</code>, <code>handleSync</code></p>
+            </div>
+
+            <div class="method-card">
+                <div class="method-signature">Unsubscribe</div>
+                <div class="method-description">Function type for unsubscribing from listeners or handlers.</div>
+                <pre><code class="language-lua">type Unsubscribe = () -> any?</code></pre>
+                <p><strong>Used in:</strong> Return type of <code>listen</code>, <code>serverListen</code>, <code>handle</code>, <code>handleSync</code></p>
+            </div>
+
+            <div class="method-card">
+                <div class="method-signature">Replicate</div>
+                <div class="method-description">The main Network/Replicate type. This is the singleton instance type returned by the module.</div>
+                <pre><code class="language-lua">export type Replicate = typeof(setmetatable({} :: self, Network))</code></pre>
+            </div>
+
+            <h2 id="exceptions">Exceptions</h2>
+            
+            <p>Network uses a custom exception system for error handling. All exceptions extend a base <code>Exception</code> class and can be thrown using the <code>:throw()</code> method.</p>
+
+            <h3>Exception Base Class</h3>
+            <div class="method-card">
+                <div class="method-signature">Exception.new(title: string, message: string): GenericException</div>
+                <div class="method-description">Creates a new exception instance.</div>
+                <div class="method-card">
+                    <div class="method-signature">Exception:throw(): nil</div>
+                    <div class="method-description">Throws the exception as an error with format: <code>"{Title} - {Message}"</code>.</div>
+                </div>
+            </div>
+
+            <h3>Exception Types</h3>
+            
+            <div class="method-card">
+                <div class="method-signature">DuplicateChannelException</div>
+                <div class="method-description">Thrown when attempting to create a client channel that already exists.</div>
+                <pre><code class="language-lua">DuplicateChannelException.new(channel: string): GenericException</code></pre>
+                <p><strong>Message:</strong> <code>"Duplicate client channel creation, channel ({channel}) already exists."</code></p>
+            </div>
+
+            <div class="method-card">
+                <div class="method-signature">ChannelNotFoundException</div>
+                <div class="method-description">Thrown when attempting to use a channel that doesn't exist or wasn't registered.</div>
+                <pre><code class="language-lua">ChannelNotFoundException.new(channel: string, context: string?): GenericException</code></pre>
+                <p><strong>Message:</strong> <code>"Unable to locate Channel \"{channel}\" ({context}), did you add it as a Client Channel?"</code></p>
+            </div>
+
+            <div class="method-card">
+                <div class="method-signature">ChannelAlreadyHandledException</div>
+                <div class="method-description">Thrown when attempting to register a second sync handler for a channel that already has one.</div>
+                <pre><code class="language-lua">ChannelAlreadyHandledException.new(channel: string): GenericException</code></pre>
+            </div>
+
+            <div class="method-card">
+                <div class="method-signature">ChannelNameRequiredException</div>
+                <div class="method-description">Thrown when a channel name is <code>nil</code> or not provided.</div>
+                <pre><code class="language-lua">ChannelNameRequiredException.new(): GenericException</code></pre>
+            </div>
+
+            <div class="method-card">
+                <div class="method-signature">ChannelNotStringException</div>
+                <div class="method-description">Thrown when a channel name is not a string type.</div>
+                <pre><code class="language-lua">ChannelNotStringException.new(): GenericException</code></pre>
+            </div>
+
+            <div class="method-card">
+                <div class="method-signature">ChannelNotSpecifiedException</div>
+                <div class="method-description">Thrown when a channel is not specified in a client method call.</div>
+                <pre><code class="language-lua">ChannelNotSpecifiedException.new(): GenericException</code></pre>
+            </div>
+
+            <div class="method-card">
+                <div class="method-signature">MultipleChannelsNotAllowedException</div>
+                <div class="method-description">Thrown when multiple channels are provided where only one is allowed.</div>
+                <pre><code class="language-lua">MultipleChannelsNotAllowedException.new(): GenericException</code></pre>
+            </div>
+
+            <div class="method-card">
+                <div class="method-signature">MultipleChannelsFireException</div>
+                <div class="method-description">Thrown when attempting to fire to multiple channels (client methods only accept single channel).</div>
+                <pre><code class="language-lua">MultipleChannelsFireException.new(): GenericException</code></pre>
+            </div>
+
+            <div class="method-card">
+                <div class="method-signature">CallbackNotFunctionException</div>
+                <div class="method-description">Thrown when a callback parameter is not a function.</div>
+                <pre><code class="language-lua">CallbackNotFunctionException.new(): GenericException</code></pre>
+            </div>
+
+            <div class="method-card">
+                <div class="method-signature">ClientOnlyMethodException</div>
+                <div class="method-description">Thrown when a client-only method is called on the server.</div>
+                <pre><code class="language-lua">ClientOnlyMethodException.new(): GenericException</code></pre>
+                <p><strong>Affected methods:</strong> <code>fire</code>, <code>fireUnreliable</code>, <code>invoke</code>, <code>request</code></p>
+            </div>
+
+            <div class="method-card">
+                <div class="method-signature">TagsNotArrayException</div>
+                <div class="method-description">Thrown when tags parameter is not a table/array.</div>
+                <pre><code class="language-lua">TagsNotArrayException.new(): GenericException</code></pre>
+            </div>
+
+            <div class="method-card">
+                <div class="method-signature">TagsEmptyException</div>
+                <div class="method-description">Thrown when tags array is empty.</div>
+                <pre><code class="language-lua">TagsEmptyException.new(): GenericException</code></pre>
+            </div>
+
+            <div class="method-card">
+                <div class="method-signature">TagNotStringException</div>
+                <div class="method-description">Thrown when a tag in the tags array is not a string.</div>
+                <pre><code class="language-lua">TagNotStringException.new(): GenericException</code></pre>
+            </div>
+
+            <div class="method-card">
+                <div class="method-signature">DuplicateTagException</div>
+                <div class="method-description">Thrown when duplicate tags are found in a tags array.</div>
+                <pre><code class="language-lua">DuplicateTagException.new(tag: string): GenericException</code></pre>
+            </div>
+
+            <h2 id="examples">Examples</h2>
+
+            <h3>Example 1: Basic Server-to-Client Communication</h3>
+            <pre><code class="language-lua">-- Server
+local Network = require(ReplicatedStorage.Network)
+
+-- Send coins update to player
+Network:push(player, {"CoinsUpdated"}, 150)
+
+-- Client
+local Network = require(ReplicatedStorage.Network)
+
+-- Listen for coins update
+Network:listen({"CoinsUpdated"}, function(newCoins)
+    print(`Your coins: {newCoins}`)
+    UpdateCoinsUI(newCoins)
+end)</code></pre>
+
+            <h3>Example 2: Client-to-Server Communication</h3>
+            <pre><code class="language-lua">-- Server: Register channel and handle messages
+local Network = require(ReplicatedStorage.Network)
+
+Network:addClientChannel({"PlayerAction"})
+
+Network:handle("PlayerAction", function(player, action, data)
+    print(`{player.Name} performed: {action}`)
+    
+    if action == "Jump" then
+        -- Handle jump logic
+        HandlePlayerJump(player, data.height)
+    elseif action == "Purchase" then
+        -- Handle purchase logic
+        HandlePurchase(player, data.itemId)
+    end
+end)
+
+-- Client: Send action to server
+local Network = require(ReplicatedStorage.Network)
+
+-- Player jumps
+Network:fire("PlayerAction", "Jump", { height = 10 })
+
+-- Player purchases item
+Network:fire("PlayerAction", "Purchase", { itemId = 123 })</code></pre>
+
+            <h3>Example 3: Request/Response Pattern with DataAPI</h3>
+            <pre><code class="language-lua">-- Server: Set up DataAPI and Network integration
+local DataAPI = require(ReplicatedStorage.DataAPI)
+local Network = require(ReplicatedStorage.Network)
+
+-- Create DataAPI instance with schema
+local datastore = DataAPI.new("PlayerData", {
+    Coins = 0,
+    Level = 0,
+    Inventory = {}
+}, true)
+
+-- Inject player profile for default handlers
+Network:onRequest(function(player)
+    return datastore:GetProfileSync(player) -- Returns the player's DataAPI profile
+end)
+
+-- Set up default handlers that use the profile
+Network:addDefault({"Coins"}, function(profile)
+    return profile:ReadAsync("Coins")
+end)
+
+Network:addDefault({"Level"}, function(profile)
+    return profile:ReadAsync("Level")
+end)
+
+Network:addDefault({"Inventory"}, function(profile)
+    return profile:ReadAsync("Inventory")
+end)
+
+-- Load player profiles when they join
+Players.PlayerAdded:Connect(function(player)
+    datastore:LoadProfile(player)
+end)
+
+-- Client: Set up listener FIRST (before requesting)
+local Network = require(ReplicatedStorage.Network)
+
+-- Listen for response (set up before request to ensure data is received)
+Network:listen({"Coins"}, function(coins)
+    print(`Coins: {coins}`)
+    UpdateCoinsUI(coins)
+end)
+
+Network:listen({"Level"}, function(level)
+    print(`Level: {level}`)
+    UpdateLevelUI(level)
+end)
+
+-- Then request the data (on-demand)
+-- Note: request() returns nil, data comes via the listener callbacks above
+Network:request({"Coins", "Level"})</code></pre>
+
+            <h3>Example 4: Synchronous Request/Response (Not for Data Replication)</h3>
+            <pre><code class="language-lua">-- Server: Handle synchronous validation (use request/addDefault for data replication)
+local Network = require(ReplicatedStorage.Network)
+
+Network:addClientChannel({"ValidateAction"})
+
+Network:handleSync("ValidateAction", function(player, action, data)
+    -- Synchronous operation that needs immediate response
+    local isValid = ValidatePlayerAction(player, action, data)
+    if isValid then
+        ProcessAction(player, action, data)
+        return true, "Action processed"
+    else
+        return false, "Action invalid"
+    end
+end)
+
+-- Client: Invoke and wait for immediate response
+local Network = require(ReplicatedStorage.Network)
+
+local success, message = Network:invoke("ValidateAction", "Purchase", { itemId = 123 })
+if success then
+    print(`Action successful: {message}`)
+else
+    warn(`Action failed: {message}`)
+end
+
+-- Note: For data replication, use request/addDefault instead:
+-- Server: Network:addDefault({"PlayerData"}, function(player) return GetPlayerData(player) end)
+-- Client: Network:listen({"PlayerData"}, function(data) ... end); Network:request({"PlayerData"})</code></pre>
+
+            <h3>Example 5: Broadcasting to All Players</h3>
+            <pre><code class="language-lua">-- Server: Broadcast server announcement
+local Network = require(ReplicatedStorage.Network)
+
+-- Reliable broadcast
+Network:pushAll({"ServerAnnouncement"}, "Welcome to the game!")
+
+-- Unreliable broadcast (for frequent updates)
+Network:pushAllUnreliable({"WorldStateUpdate"}, {
+    TimeOfDay = 12,
+    Weather = "Sunny",
+    ActivePlayers = #Players:GetPlayers()
+})
+
+-- Client: Listen for broadcasts
+local Network = require(ReplicatedStorage.Network)
+
+Network:listen({"ServerAnnouncement"}, function(message)
+    ShowNotification(message)
+end)
+
+Network:listen({"WorldStateUpdate"}, function(worldState)
+    UpdateWorldUI(worldState)
+end)</code></pre>
+
+            <h3>Example 6: Multiple Tags and Unsubscribing</h3>
+            <pre><code class="language-lua">-- Client: Listen to multiple tags
+local Network = require(ReplicatedStorage.Network)
+
+local unsubscribe = Network:listen({"CoinsUpdated", "LevelUp", "ItemReceived"}, function(...)
+    local args = {...}
+    print("Received update:", args)
+end)
+
+-- Later, stop listening
+unsubscribe()
+
+-- Server: Send to multiple tags
+local Network = require(ReplicatedStorage.Network)
+
+Network:push(player, {"CoinsUpdated", "StatsChanged"}, 150, 5)</code></pre>
+
+            <h3>Example 7: Unreliable Messages for Frequent Updates</h3>
+            <pre><code class="language-lua">-- Server: Send position updates (unreliable is fine for frequent updates)
+local Network = require(ReplicatedStorage.Network)
+
+RunService.Heartbeat:Connect(function()
+    for _, player in Players:GetPlayers() do
+        local character = player.Character
+        if character and character:FindFirstChild("HumanoidRootPart") then
+            local position = character.HumanoidRootPart.Position
+            -- Use unreliable for frequent position updates
+            Network:pushUnreliable(player, {"PositionUpdate"}, position.X, position.Y, position.Z)
+        end
+    end
+end)
+
+-- Client: Listen for position updates
+local Network = require(ReplicatedStorage.Network)
+
+Network:listen({"PositionUpdate"}, function(x, y, z)
+    UpdateMinimapPosition(x, y, z)
+end)</code></pre>
+
+            <h3>Example 8: Delayed Messages</h3>
+            <pre><code class="language-lua">-- Server: Create delayed message function
+local Network = require(ReplicatedStorage.Network)
+
+local function OnPlayerJoin(player)
+    -- Create a delayed welcome message
+    local sendWelcome = Network:delay(player, {"WelcomeMessage"}, "Welcome to the game!", player.Name)
+    
+    -- Send immediately
+    sendWelcome()
+    
+    -- Or schedule it
+    task.wait(5)
+    sendWelcome()  -- Send again after 5 seconds
+end</code></pre>
+
+            <h2 id="best-practices">Best Practices</h2>
+            <ol>
+                <li><strong>Register client channels early</strong> - Call <code>addClientChannel</code> during server initialization, not during gameplay</li>
+                <li><strong>Use appropriate remote types</strong>:
+                    <ul>
+                        <li>Use <code>RemoteEvent</code> (reliable) for important data like currency, inventory, stats</li>
+                        <li>Use <code>UnreliableRemoteEvent</code> for frequent, non-critical updates like position, animations</li>
+                        <li>Use <code>RemoteFunction</code> (sync) only when you need immediate response</li>
+                    </ul>
+                </li>
+                <li><strong>Unsubscribe when done</strong> - Always store and call unsubscribe functions to prevent memory leaks:
+                    <pre><code class="language-lua">local unsubscribe = Network:listen({"CoinsUpdated"}, function(coins)
+    -- Handle update
+end)
+
+-- Later, when done
+unsubscribe()</code></pre>
+                </li>
+                <li><strong>Use tags consistently</strong> - Establish a naming convention for tags (e.g., <code>"CoinsUpdated"</code>, <code>"LevelUp"</code>, <code>"ItemReceived"</code>)</li>
+                <li><strong>Validate on server</strong> - Always validate client input on the server, never trust client data</li>
+                <li><strong>Handle errors gracefully</strong> - Network methods throw exceptions for invalid operations. Use pcall or try-catch when appropriate</li>
+                <li><strong>Use request system for initial data</strong> - Use <code>request</code> and <code>addDefault</code> for fetching initial player data instead of custom channels</li>
+                <li><strong>Don't spam unreliable messages</strong> - Even though unreliable messages are fast, sending too many can still cause performance issues</li>
+                <li><strong>Organize channels logically</strong> - Group related functionality into channels (e.g., <code>"PlayerAction"</code>, <code>"Shop"</code>, <code>"Chat"</code>)</li>
+                <li><strong>Use multiple tags wisely</strong> - Sending to multiple tags is useful for broadcasting related updates, but don't overuse it</li>
+            </ol>
+
+            <h3>Common Pitfalls</h3>
+            <ul>
+                <li><strong>Forgetting to register channels</strong> - Always call <code>addClientChannel</code> before using <code>handle</code> or <code>handleSync</code></li>
+                <li><strong>Calling client methods on server</strong> - Methods like <code>fire</code>, <code>invoke</code>, and <code>request</code> are client-only</li>
+                <li><strong>Not unsubscribing</strong> - Failing to unsubscribe can cause memory leaks and duplicate handlers</li>
+                <li><strong>Using sync for everything</strong> - <code>invoke</code> yields the thread. Use async methods (<code>fire</code> + <code>listen</code>) when possible</li>
+                <li><strong>Duplicate channel handlers</strong> - Only one <code>handleSync</code> can be registered per channel</li>
+            </ul>
+        </main>
+    </div>
+
+    <div class="scroll-top" id="scrollTop" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M18 15l-6-6-6 6"/>
+        </svg>
+    </div>
+
+    <script>
+        // Scroll to top button
+        const scrollTopBtn = document.getElementById('scrollTop');
+        
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) {
+                scrollTopBtn.classList.add('visible');
+            } else {
+                scrollTopBtn.classList.remove('visible');
+            }
+        });
+
+        // Helper function to extract hash from href (works with htmlpreview's modified URLs)
+        function extractHash(href) {
+            if (!href) return '';
+            const hashIndex = href.indexOf('#');
+            if (hashIndex !== -1) {
+                return href.substring(hashIndex);
+            }
+            return href.startsWith('#') ? href : '';
+        }
+
+        // Active navigation highlighting
+        const sections = document.querySelectorAll('h2[id], h3[id]');
+        const navLinks = document.querySelectorAll('.sidebar a');
+
+        window.addEventListener('scroll', () => {
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.clientHeight;
+                if (pageYOffset >= sectionTop - 200) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                const linkHash = extractHash(link.getAttribute('href'));
+                if (linkHash === '#' + current) {
+                    link.classList.add('active');
+                }
+            });
+        });
+
+        // Smooth scroll for navigation links
+        document.querySelectorAll('.sidebar a').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                const href = this.getAttribute('href');
+                const hash = extractHash(href);
+                
+                if (hash) {
+                    const targetId = hash.substring(1);
+                    // Always use getElementById, never querySelector with href
+                    const target = document.getElementById(targetId);
+                    if (target) {
+                        // Calculate offset for sticky header
+                        const offset = 100;
+                        const targetPosition = target.getBoundingClientRect().top + window.pageYOffset - offset;
+                        window.scrollTo({
+                            top: targetPosition,
+                            behavior: 'smooth'
+                        });
+                    } else {
+                        // Fallback: try direct navigation
+                        window.location.hash = hash;
+                    }
+                }
+            });
+        });
+    </script>
+    
+    <!-- Highlight.js Script - Loaded asynchronously to avoid blocking -->
+    <script>
+        (function() {
+            // Self-contained highlighting initialization
+            function tryHighlight() {
+                if (typeof window.hljs !== 'undefined' && window.hljs.highlightElement) {
+                    try {
+                        document.querySelectorAll('pre code').forEach(function(block) {
+                            if (!block.classList.contains('hljs')) {
+                                window.hljs.highlightElement(block);
+                            }
+                        });
+                    } catch (e) {
+                        // Silently fail - highlighting is optional
+                    }
+                }
+            }
+            
+            // Load Highlight.js scripts
+            var hljsScript = document.createElement('script');
+            hljsScript.src = 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js';
+            hljsScript.onload = function() {
+                // Load Lua language support
+                var luaScript = document.createElement('script');
+                luaScript.src = 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/lua.min.js';
+                luaScript.onload = tryHighlight;
+                luaScript.onerror = function() { /* ignore */ };
+                document.head.appendChild(luaScript);
+                
+                // Try highlighting immediately
+                setTimeout(tryHighlight, 50);
+            };
+            hljsScript.onerror = function() { 
+                // Silently fail - page works without highlighting
+            };
+            document.head.appendChild(hljsScript);
+            
+            // Also try on DOMContentLoaded and after a delay
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', function() {
+                    setTimeout(tryHighlight, 200);
+                });
+            } else {
+                setTimeout(tryHighlight, 200);
+            }
+            
+            // Final retry after everything should be loaded
+            setTimeout(tryHighlight, 1000);
+        })();
+    </script>
+</body>
+</html>
